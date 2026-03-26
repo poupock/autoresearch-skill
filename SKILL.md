@@ -301,6 +301,57 @@ Result: Hit 39/40. One remaining failure: a complex diagram with overlapping lab
 
 ---
 
+## web search setup
+
+Some skills need current information from the web (docs, APIs, recent best practices). Claude Code has a built-in `WebSearch` tool that works out of the box and covers ~80% of use cases. For higher-quality results, connect an MCP search server.
+
+### Option 1: Built-in WebSearch (no setup needed)
+
+Claude Code includes a `WebSearch` tool by default. Use it directly — no configuration required. Good enough for most autoresearch runs where you need to look up documentation or verify current behavior.
+
+### Option 2: Brave Search MCP (recommended for serious use)
+
+Brave has its own independent index of 30B+ pages. Free plan: 2000 requests/month at 1 req/sec.
+
+1. Get an API key at [brave.com/search/api](https://brave.com/search/api)
+2. Add the MCP server:
+
+```bash
+claude mcp add-json brave-search '{
+  "type": "stdio",
+  "command": "npx",
+  "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+  "env": {"BRAVE_API_KEY": "YOUR_BRAVE_API_KEY"}
+}'
+```
+
+### Option 3: Tavily MCP (best for technical docs)
+
+Tavily is built specifically for AI agents and excels at technical documentation. Free plan: 1000 requests/month.
+
+1. Get an API key at [tavily.com](https://tavily.com)
+2. Add the MCP server:
+
+```bash
+claude mcp add tavily \
+  --transport http \
+  https://mcp.tavily.com/mcp/?tavilyApiKey=YOUR_KEY
+```
+
+### Using multiple search sources
+
+Claude Code supports multiple MCP search servers simultaneously and automatically picks the best tool per query. You can have both Brave and Tavily active at the same time.
+
+### When to use web search in autoresearch
+
+- **During failure analysis (step 5.1):** Search for known issues, updated APIs, or changed behavior that might explain why a skill is failing.
+- **During mutation design (step 5.2):** Look up current best practices or documentation before writing a new instruction.
+- **During eval scoring:** Verify factual claims in skill outputs against current sources.
+
+**Do NOT** use web search on every single run — it adds latency and burns API quota. Use it strategically when the skill deals with external knowledge that may have changed.
+
+---
+
 ## how this connects to other skills
 
 **What feeds into autoresearch:**
