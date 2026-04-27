@@ -1,0 +1,26 @@
+{
+  "Mr.": "мистер",
+  "Mrs.": "миссис",
+  "Ms.": "мисс",
+  "Dr.": "доктор",
+  "Professor": "профессор",
+  "Sir": "сэр",
+  "Lady": "леди",
+
+  "Chapter": "Глава",
+  "Prologue": "Пролог",
+  "Epilogue": "Эпилог",
+  "Part": "Часть",
+  "Volume": "Том",
+  "Foreword": "Предисловие",
+  "Introduction": "Введение",
+  "Acknowledgments": "Благодарности",
+  "Contents": "Содержание",
+  "Appendix": "Приложение",
+  "Bibliography": "Библиография",
+  "Index": "Указатель",
+  "About the Author": "Об авторе",
+
+  "Note": "Примечание",
+  "Footnote": "Сноска"
+}
