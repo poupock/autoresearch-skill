@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
+<title>English Daily</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+--bg:#ffffff;--s1:#ffffff;--s2:#f6f6f7;--s3:#eeeef0;
+--ink:#0a0a0a;--ink2:#3a3a3a;--ink3:#6b6b6b;
+--acc:#1a56db;--acc2:#1e40af;--acc-bg:#eff6ff;
+--grn:#15803d;--grn-bg:#f0fdf4;--grn-brd:#bbf7d0;
+--red:#b91c1c;--red-bg:#fef2f2;--red-brd:#fecaca;
+--gold:#92400e;--gold-bg:#fffbeb;--gold-brd:#fde68a;
+--brd:#e7e7ea;--brd2:#d1d1d6;
+--shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+--shadow2:0 4px 16px rgba(0,0,0,.08);
+}
+[data-theme="dark"]{
+--bg:#0f1115;--s1:#181b21;--s2:#1f232b;--s3:#272c35;
+--ink:#f4f5f7;--ink2:#c5c8ce;--ink3:#8b8f98;
+--acc:#5b8def;--acc2:#7aa5f5;--acc-bg:#16223a;
+--grn:#4ade80;--grn-bg:#13251a;--grn-brd:#1f4d2e;
+--red:#f87171;--red-bg:#2a1416;--red-brd:#5a2326;
+--gold:#fbbf24;--gold-bg:#2a2310;--gold-brd:#594a16;
+--brd:#272c35;--brd2:#3a404b;
+--shadow:0 1px 3px rgba(0,0,0,.3);
+--shadow2:0 4px 20px rgba(0,0,0,.5);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{background:var(--bg);}
+body{font-family:'Sora',-apple-system,sans-serif;color:var(--ink);min-height:100dvh;padding-bottom:calc(72px + env(safe-area-inset-bottom,0));transition:background .3s,color .3s;overflow-x:hidden;}
+.app{max-width:540px;margin:0 auto;}
+/* TOP BAR */
+.topbar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--brd);padding:calc(env(safe-area-inset-top,0) + 10px) 16px 10px;display:flex;align-items:center;justify-content:space-between;transition:background .3s;}
+.tb-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.tb-title .logo{width:26px;height:26px;border-radius:8px;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.tb-actions{display:flex;gap:8px;}
+.tb-btn{width:36px;height:36px;border-radius:10px;border:1.5px solid var(--brd2);background:var(--s1);color:var(--ink2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.tb-btn:active{transform:scale(.92);}
+/* SCREENS */
+.scr{display:none;padding:14px 16px 20px;animation:fadeIn .3s;}
+.scr.vis{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.h1{font-family:'Fraunces',serif;font-size:23px;font-weight:700;margin:4px 0 3px;}
+.sub{color:var(--ink3);font-size:12.5px;margin-bottom:16px;line-height:1.5;}
+.sect{font-size:10.5px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:1.5px;margin:18px 0 10px;}
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:60;background:var(--bg);border-top:1px solid var(--brd);display:flex;padding-bottom:env(safe-area-inset-bottom,0);max-width:540px;margin:0 auto;transition:background .3s;}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 7px;border:none;background:none;color:var(--ink3);font-family:inherit;font-size:9px;font-weight:600;cursor:pointer;position:relative;transition:color .2s;}
+.nb .ic{font-size:20px;line-height:1;transition:transform .2s;}
+.nb.on{color:var(--acc);}
+.nb.on .ic{transform:translateY(-1px) scale(1.08);}
+.nb.on::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:24px;height:3px;border-radius:0 0 4px 4px;background:var(--acc);}
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--brd);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
+.card.flat{box-shadow:none;}
+/* BUTTONS */
+.btn{width:100%;padding:13px;border-radius:12px;border:none;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:transform .15s,opacity .2s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn:active{transform:scale(.97);}
+.btn.primary{background:var(--ink);color:var(--bg);}
+.btn.acc{background:var(--acc);color:#fff;}
+.btn.g{background:var(--grn);color:#fff;}
+.btn.ghost{background:var(--s2);color:var(--ink2);border:1.5px solid var(--brd2);}
+.btn.sm{padding:9px 14px;font-size:12px;width:auto;border-radius:10px;}
+.btn:disabled{opacity:.4;pointer-events:none;}
+/* PROGRESS */
+.prog{height:6px;background:var(--s3);border-radius:6px;overflow:hidden;}
+.prog-f{height:100%;border-radius:6px;background:var(--acc);transition:width .4s cubic-bezier(.4,0,.2,1);}
+.prog-f.g{background:var(--grn);}
+/* PILLS */
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.pill{padding:6px 13px;border-radius:18px;border:1.5px solid var(--brd2);background:var(--s1);color:var(--ink2);font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.pill.on{border-color:var(--acc);color:#fff;background:var(--acc);}
+/* SCROW */
+.scrow{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--ink3);margin-bottom:12px;font-weight:600;}
+.scrow b{color:var(--acc);font-weight:700;}
+/* MSG */
+.msg{font-size:12.5px;padding:11px 13px;border-radius:11px;margin-top:10px;display:none;line-height:1.5;}
+.msg.vis{display:block;animation:fadeIn .25s;}
+.msg.ok{background:var(--grn-bg);color:var(--grn);border:1px solid var(--grn-brd);}
+.msg.no{background:var(--red-bg);color:var(--red);border:1px solid var(--red-brd);}
+.msg.yel{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-brd);}
+/* OPTIONS */
+.opts{display:flex;flex-direction:column;gap:8px;}
+.opt{padding:13px 14px;background:var(--s1);border:1.5px solid var(--brd2);border-radius:13px;font-size:14px;cursor:pointer;font-family:inherit;color:var(--ink);text-align:left;display:flex;align-items:center;gap:11px;transition:all .15s;}
+.opt:active{transform:scale(.98);}
+.opt .lt{width:24px;height:24px;border-radius:7px;background:var(--s2);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ink3);flex-shrink:0;}
+.opt.cor{border-color:var(--grn);background:var(--grn-bg);color:var(--grn);}
+.opt.cor .lt{background:var(--grn);color:#fff;border-color:var(--grn);}
+.opt.wrg{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+.opt.wrg .lt{background:var(--red);color:#fff;border-color:var(--red);}
+/* EXPLANATION */
+.exp{display:none;margin-top:10px;padding:11px 13px;border-radius:11px;font-size:12px;line-height:1.5;}
+.exp.vis{display:block;animation:fadeIn .25s;}
+.exp.ce{background:var(--grn-bg);border:1px solid var(--grn-brd);color:var(--grn);}
+.exp.we{background:var(--red-bg);border:1px solid var(--red-brd);color:var(--red);}
+/* NEXT */
+.nxt{display:none;width:100%;padding:12px;border-radius:12px;border:none;background:var(--ink);color:var(--bg);font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:10px;}
+.nxt.vis{display:block;animation:fadeIn .25s;}
+/* RESULT */
+.res{text-align:center;padding:22px 14px;}
+.r-em{font-size:46px;margin-bottom:10px;}
+.r-t{font-family:'Fraunces',serif;font-size:21px;font-weight:700;margin-bottom:6px;}
+.r-s{display:flex;justify-content:center;gap:20px;margin:14px 0 18px;}
+.rs{text-align:center;}.rsn{font-size:24px;font-weight:700;}.rsn.g{color:var(--grn);}.rsn.r{color:var(--red);}.rsn.y{color:var(--gold);}
+.rsl{font-size:9px;color:var(--ink3);text-transform:uppercase;font-weight:700;margin-top:2px;letter-spacing:.5px;}
+/* TEXTAREA */
+.ta{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--brd2);background:var(--s1);color:var(--ink);font-family:'Sora',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.6;transition:border .2s;}
+.ta:focus{border-color:var(--acc);}
+/* HOME / TODAY */
+.hero{background:linear-gradient(135deg,var(--ink),var(--acc2));color:#fff;border-radius:20px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden;}
+[data-theme="dark"] .hero{background:linear-gradient(135deg,var(--acc2),#0d2b6b);}
+.hero-greet{font-size:13px;opacity:.85;margin-bottom:3px;}
+.hero-day{font-family:'Fraunces',serif;font-size:26px;font-weight:700;margin-bottom:10px;}
+.hero-streak{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;}
+.hero-prog{margin-top:14px;}
+.hero-prog-bar{height:8px;background:rgba(255,255,255,.25);border-radius:8px;overflow:hidden;}
+.hero-prog-fill{height:100%;background:#fff;border-radius:8px;transition:width .5s;}
+.hero-prog-txt{font-size:11px;opacity:.85;margin-top:6px;}
+/* DAY PLAN */
+.task{display:flex;align-items:center;gap:12px;padding:14px;background:var(--s1);border:1.5px solid var(--brd);border-radius:14px;margin-bottom:9px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow);}
+.task:active{transform:scale(.99);}
+.task.done{border-color:var(--grn-brd);background:var(--grn-bg);}
+.task.locked{opacity:.5;pointer-events:none;}
+.task-ic{width:42px;height:42px;border-radius:12px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;}
+.task.done .task-ic{background:var(--grn);}
+.task-body{flex:1;min-width:0;}
+.task-title{font-size:14px;font-weight:700;margin-bottom:2px;}
+.task-sub{font-size:11px;color:var(--ink3);}
+.task-arrow{color:var(--ink3);font-size:18px;}
+.task.done .task-check{color:var(--grn);font-size:22px;}
+.task.locked .task-arrow{font-size:15px;}
+/* SEGMENT */
+.seg{display:flex;background:var(--s2);border-radius:12px;padding:3px;margin-bottom:14px;gap:3px;}
+.seg-btn{flex:1;padding:9px;border-radius:9px;border:none;background:none;font-family:inherit;font-size:11.5px;font-weight:700;color:var(--ink3);cursor:pointer;transition:all .2s;}
+.seg-btn.on{background:var(--s1);color:var(--ink);box-shadow:var(--shadow);}
+/* FLASHCARD */
+.fc-scene{perspective:1200px;margin-bottom:14px;}
+.fc-card{width:100%;aspect-ratio:3/2;max-height:250px;position:relative;cursor:pointer;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+.fc-card.flip{transform:rotateY(180deg);}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;box-shadow:var(--shadow2);}
+.fc-front{background:var(--s1);border:1.5px solid var(--brd2);}
+.fc-back{background:var(--grn-bg);border:1.5px solid var(--grn-brd);transform:rotateY(180deg);}
+.fc-lbl{font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:var(--ink3);margin-bottom:8px;font-weight:700;}
+.fc-word{font-family:'Fraunces',serif;font-size:26px;font-weight:700;text-align:center;margin-bottom:4px;}
+.fc-m{font-size:12px;color:var(--ink3);text-align:center;line-height:1.4;font-style:italic;max-width:90%;margin-bottom:9px;}
+.fc-snd{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--brd2);background:var(--s1);color:var(--acc);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.fc-hint{position:absolute;bottom:10px;font-size:8.5px;color:var(--ink3);letter-spacing:1px;font-weight:600;}
+.fc-bw{font-family:'Fraunces',serif;font-size:21px;font-weight:700;color:var(--grn);margin-bottom:5px;text-align:center;}
+.fc-be{font-size:12px;color:var(--ink3);text-align:center;line-height:1.5;font-style:italic;max-width:88%;}
+.fc-be b{color:var(--grn);font-style:normal;}
+.fc-rate{display:flex;gap:6px;margin-bottom:11px;}
+.fc-rbtn{flex:1;padding:11px 3px;border-radius:12px;border:1.5px solid var(--brd2);background:var(--s1);font-family:inherit;font-size:9.5px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink2);transition:transform .15s;}
+.fc-rbtn:active{transform:scale(.94);}
+.fc-nav{display:flex;justify-content:center;gap:10px;}
+.fc-nbtn{padding:8px 16px;border-radius:10px;border:1.5px solid var(--brd2);background:var(--s1);color:var(--ink2);font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;}
+.fc-card.sl{animation:slideL .25s forwards;}
+.fc-card.sr{animation:slideR .25s forwards;}
+.fc-card.ent{animation:cardEnt .25s ease-out;}
+@keyframes slideL{to{transform:translateX(-120%) rotate(-6deg);opacity:0;}}
+@keyframes slideR{to{transform:translateX(120%) rotate(6deg);opacity:0;}}
+@keyframes cardEnt{from{transform:translateY(20px) scale(.95);opacity:0;}to{opacity:1;transform:none;}}
+/* DOTS */
+.dots{display:flex;gap:3px;margin-bottom:12px;}
+.dot{flex:1;height:4px;border-radius:4px;background:var(--s3);transition:background .3s;}
+.dot.dn{background:var(--grn);}.dot.wr{background:var(--red);}.dot.cu{background:var(--acc);}
+/* SPEAK */
+.speak-phrase{font-size:19px;font-weight:700;text-align:center;padding:22px 18px;line-height:1.6;background:var(--s2);border-radius:16px;border:1.5px solid var(--brd2);margin-bottom:12px;}
+.speak-btn{width:76px;height:76px;border-radius:50%;border:none;background:var(--ink);color:var(--bg);font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;transition:transform .15s;}
+.speak-btn:active{transform:scale(.92);}
+.speak-btn.active{background:var(--acc);animation:pulseAcc 1.1s infinite;}
+@keyframes pulseAcc{0%,100%{box-shadow:0 0 0 0 rgba(26,86,219,.3);}50%{box-shadow:0 0 0 16px rgba(26,86,219,0);}}
+.speak-rate{display:flex;gap:8px;justify-content:center;margin-top:8px;}
+.speak-rbtn{flex:1;padding:12px 6px;border-radius:13px;border:1.5px solid var(--brd2);background:var(--s1);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:transform .15s;}
+.speak-rbtn:active{transform:scale(.95);}
+/* DICTATION */
+.dict-play{width:68px;height:68px;border-radius:50%;border:none;background:var(--acc);color:#fff;font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;transition:transform .15s;}
+.dict-play:active{transform:scale(.92);}
+.dict-play.playing{animation:pulseAcc 1.1s infinite;}
+.word-reveal{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;justify-content:center;}
+.wr-word{padding:5px 11px;border-radius:9px;font-size:13px;font-family:'JetBrains Mono',monospace;background:var(--grn-bg);color:var(--grn);font-weight:600;border:1px solid var(--grn-brd);}
+.wr-word.miss{background:var(--red-bg);color:var(--red);border-color:var(--red-brd);}
+/* RULES */
+.rule-card{background:var(--s1);border:1.5px solid var(--brd);border-radius:16px;margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow);}
+.rule-head{padding:14px 15px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
+.rule-num{width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rule-num.learned{background:var(--grn);}
+.rule-name{font-size:13.5px;font-weight:700;}
+.rule-body{display:none;padding:0 15px 15px;}
+.rule-body.open{display:block;}
+.rule-tip{font-size:12.5px;color:var(--ink2);line-height:1.6;margin-bottom:11px;padding:11px 13px;background:var(--acc-bg);border-radius:11px;border-left:3px solid var(--acc);}
+.rule-pair{display:flex;align-items:center;gap:8px;font-size:12.5px;margin-bottom:5px;font-family:'JetBrains Mono',monospace;}
+.rp-w{color:var(--red);text-decoration:line-through;}
+.rp-r{color:var(--grn);font-weight:600;}
+.rule-ex{font-size:12px;color:var(--ink3);font-style:italic;margin-top:10px;padding-top:10px;border-top:1px solid var(--brd);line-height:1.5;}
+.rule-ex b{color:var(--acc);font-style:normal;}
+.snd-row{display:flex;gap:6px;margin-top:11px;flex-wrap:wrap;}
+.snd-btn{padding:6px 12px;border-radius:9px;border:1.5px solid var(--brd2);background:var(--s1);color:var(--acc);font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;}
+/* CHECKLIST */
+.cl-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:12px 14px;background:var(--s2);border-radius:13px;border:1.5px solid var(--brd2);}
+.cl-pct{font-size:13px;font-weight:700;color:var(--grn);white-space:nowrap;}
+.cl-item{display:flex;align-items:flex-start;gap:11px;padding:13px 14px;border-radius:13px;border:1.5px solid var(--brd2);background:var(--s1);margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.cl-item.done{border-color:var(--grn-brd);background:var(--grn-bg);}
+.cl-check{width:24px;height:24px;border-radius:7px;border:2px solid var(--brd2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:transparent;transition:all .2s;}
+.cl-item.done .cl-check{background:var(--grn);border-color:var(--grn);color:#fff;}
+.cl-title{font-size:13px;font-weight:700;margin-bottom:2px;}
+.cl-item.done .cl-title{text-decoration:line-through;color:var(--ink3);}
+.cl-sub{font-size:10.5px;color:var(--ink3);line-height:1.4;}
+/* STATS */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px;}
+.stat-box{background:var(--s1);border:1.5px solid var(--brd);border-radius:14px;padding:14px;text-align:center;box-shadow:var(--shadow);}
+.sb-n{font-family:'Fraunces',serif;font-size:30px;font-weight:700;line-height:1;}
+.sb-l{font-size:9.5px;color:var(--ink3);text-transform:uppercase;font-weight:700;margin-top:5px;letter-spacing:.5px;}
+.streak-big{background:var(--ink);color:var(--bg);border-radius:18px;padding:20px;text-align:center;margin-bottom:14px;}
+.streak-n{font-family:'Fraunces',serif;font-size:56px;font-weight:700;line-height:1;}
+.streak-l{font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.65;margin-top:5px;font-weight:700;}
+/* COMPARE */
+.cmp-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--brd);}
+.cmp-row:last-child{border-bottom:none;}
+.cmp-label{font-size:12.5px;color:var(--ink2);font-weight:600;}
+.cmp-vals{display:flex;align-items:center;gap:10px;}
+.cmp-now{font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.cmp-delta{font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;}
+.cmp-delta.up{background:var(--grn-bg);color:var(--grn);}
+.cmp-delta.down{background:var(--red-bg);color:var(--red);}
+.cmp-delta.same{background:var(--s2);color:var(--ink3);}
+/* HEATMAP */
+.heat-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;}
+.heat-l{font-size:8.5px;color:var(--ink3);text-align:center;padding:2px 0;font-weight:700;}
+.heat-c{aspect-ratio:1;border-radius:6px;background:var(--s3);border:1px solid transparent;}
+.heat-c.l1{background:var(--grn-brd);}.heat-c.l2{background:#6ee7a8;}.heat-c.l3{background:var(--grn);}.heat-c.l4{background:#0f6b34;}
+[data-theme="dark"] .heat-c.l1{background:#1f4d2e;}[data-theme="dark"] .heat-c.l2{background:#2d7a45;}[data-theme="dark"] .heat-c.l3{background:#4ade80;}[data-theme="dark"] .heat-c.l4{background:#86efac;}
+.heat-c.today{outline:2px solid var(--acc);outline-offset:1px;}
+/* SRS */
+.srs-row{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--s1);border:1.5px solid var(--brd);border-radius:14px;margin-bottom:8px;box-shadow:var(--shadow);}
+.srs-row.now{border-color:var(--acc);background:var(--acc-bg);}
+.srs-row.done-r{border-color:var(--grn-brd);background:var(--grn-bg);opacity:.7;}
+.srs-day{font-family:'Fraunces',serif;font-size:22px;font-weight:700;min-width:38px;text-align:center;}
+.srs-info{flex:1;}
+.srs-task{font-size:12.5px;font-weight:700;margin-bottom:1px;}
+.srs-when{font-size:10.5px;font-weight:600;}
+.srs-ic{font-size:19px;}
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end;justify-content:center;animation:fadeIn .2s;}
+.modal-bg.vis{display:flex;}
+.modal{background:var(--bg);border-radius:22px 22px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom,0));width:100%;max-width:540px;animation:slideUp .3s;}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:none;}}
+.modal-h{font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-bottom:8px;text-align:center;}
+.modal-sub{font-size:13px;color:var(--ink3);text-align:center;line-height:1.5;margin-bottom:18px;}
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:12px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:all .3s;pointer-events:none;box-shadow:var(--shadow2);}
+.toast.vis{opacity:1;transform:translateX(-50%) translateY(0);}
+/* CONFETTI BURST */
+.locked-badge{font-size:9px;background:var(--s3);color:var(--ink3);padding:2px 8px;border-radius:8px;font-weight:700;}
+/* SESSION CARDS */
+.session-card{border-radius:20px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden;cursor:pointer;transition:transform .15s;}
+.session-card:active{transform:scale(.99);}
+.session-card.morning{background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;}
+.session-card.evening{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;}
+.session-card.locked{background:var(--s2);color:var(--ink3);cursor:default;border:1.5px solid var(--brd);}
+.session-card.done{opacity:.85;}
+.sc-icon{font-size:30px;margin-bottom:8px;}
+.sc-title{font-family:'Fraunces',serif;font-size:19px;font-weight:700;margin-bottom:3px;}
+.sc-sub{font-size:12px;opacity:.9;margin-bottom:12px;line-height:1.4;}
+.sc-meta{display:flex;gap:14px;font-size:11px;opacity:.85;font-weight:600;}
+.sc-prog{margin-top:12px;height:7px;background:rgba(255,255,255,.25);border-radius:7px;overflow:hidden;}
+.session-card.locked .sc-prog{background:var(--s3);}
+.sc-prog-f{height:100%;background:#fff;border-radius:7px;transition:width .5s;}
+.session-card.locked .sc-prog-f{background:var(--brd2);}
+.sc-status{position:absolute;top:16px;right:16px;font-size:11px;font-weight:700;background:rgba(255,255,255,.25);padding:4px 11px;border-radius:20px;}
+.session-card.locked .sc-status{background:var(--s3);color:var(--ink3);}
+.sc-check{position:absolute;top:14px;right:14px;font-size:24px;}
+/* MEMORIZE STAGE */
+.mem-card{background:var(--s1);border:2px solid var(--acc);border-radius:20px;padding:22px 18px;margin-bottom:14px;text-align:center;box-shadow:var(--shadow2);}
+.mem-counter{font-size:11px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;}
+.mem-word{font-family:'Fraunces',serif;font-size:34px;font-weight:700;margin-bottom:4px;line-height:1.1;}
+.mem-tr{font-size:17px;color:var(--acc);font-weight:600;margin-bottom:12px;}
+.mem-mean{font-size:13px;color:var(--ink2);line-height:1.5;margin-bottom:10px;padding:10px 14px;background:var(--s2);border-radius:12px;}
+.mem-ex{font-size:14px;color:var(--ink3);font-style:italic;line-height:1.5;margin-bottom:16px;}
+.mem-ex b{color:var(--ink);font-style:normal;}
+.mem-snd{width:50px;height:50px;border-radius:50%;border:2px solid var(--acc);background:var(--acc-bg);color:var(--acc);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto;}
+.mem-nav{display:flex;gap:10px;}
+.mem-dots{display:flex;gap:4px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
+.mem-dot{width:8px;height:8px;border-radius:50%;background:var(--s3);transition:all .3s;}
+.mem-dot.seen{background:var(--acc);}
+.mem-dot.cur{background:var(--acc);transform:scale(1.5);}
+/* MATCHING */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.match-col{display:flex;flex-direction:column;gap:8px;}
+.match-item{padding:13px 12px;border-radius:12px;border:1.5px solid var(--brd2);background:var(--s1);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;min-height:48px;display:flex;align-items:center;justify-content:center;}
+.match-item.sel{border-color:var(--acc);background:var(--acc-bg);color:var(--acc);}
+.match-item.matched{border-color:var(--grn);background:var(--grn-bg);color:var(--grn);opacity:.6;pointer-events:none;}
+.match-item.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red);animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+/* FILL GAP */
+.gap-sentence{font-size:17px;line-height:1.8;text-align:center;margin-bottom:16px;padding:16px;background:var(--s2);border-radius:14px;}
+.gap-blank{display:inline-block;min-width:90px;border-bottom:3px solid var(--acc);color:var(--acc);font-weight:700;padding:0 6px;}
+.gap-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.gap-opt{padding:13px;border-radius:12px;border:1.5px solid var(--brd2);background:var(--s1);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;}
+.gap-opt.cor{border-color:var(--grn);background:var(--grn-bg);color:var(--grn);}
+.gap-opt.wrg{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+/* WORD ORDER */
+.wo-target{min-height:54px;border:2px dashed var(--brd2);border-radius:14px;padding:10px;display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:12px;}
+.wo-target.has{border-style:solid;border-color:var(--acc);}
+.wo-pool{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:14px;}
+.wo-chip{padding:9px 14px;border-radius:11px;border:1.5px solid var(--brd2);background:var(--s1);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;}
+.wo-chip:active{transform:scale(.94);}
+.wo-chip.used{opacity:.3;pointer-events:none;}
+.wo-chip.in{border-color:var(--acc);background:var(--acc-bg);color:var(--acc);}
+.wo-target.cor .wo-chip{border-color:var(--grn);background:var(--grn-bg);color:var(--grn);}
+.wo-target.wrg .wo-chip{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+/* TRANSLATE */
+.tr-ru{font-size:20px;font-weight:700;text-align:center;padding:20px;background:var(--s2);border-radius:14px;margin-bottom:6px;line-height:1.5;}
+.tr-hint-txt{font-size:11px;color:var(--ink3);text-align:center;margin-bottom:14px;}
+/* REMINDER BANNER */
+.reminder{background:var(--gold-bg);border:1.5px solid var(--gold-brd);border-radius:14px;padding:13px 15px;margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+.rem-ic{font-size:24px;}
+.rem-txt{flex:1;font-size:12.5px;color:var(--gold);line-height:1.4;font-weight:600;}
+.rem-close{background:none;border:none;color:var(--gold);font-size:18px;cursor:pointer;}
+/* STAGE PROGRESS BAR */
+.stage-bar{display:flex;gap:4px;margin-bottom:16px;}
+.stage-seg{flex:1;height:5px;border-radius:5px;background:var(--s3);transition:background .3s;}
+.stage-seg.done{background:var(--grn);}
+.stage-seg.cur{background:var(--acc);}
+.stage-label{text-align:center;font-size:11px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="topbar">
+<div class="tb-title"><span class="logo">E</span> English Daily</div>
+<div class="tb-actions">
+<button class="tb-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+<button class="tb-btn" onclick="openMenu()">⚙️</button>
+</div>
+</div>
+
+<!-- HOME -->
+<div class="scr vis" id="scr-home">
+<div id="reminderBox"></div>
+<div class="hero">
+<div class="hero-greet" id="heroGreet">Welcome back 👋</div>
+<div class="hero-day" id="heroDay">Day 1</div>
+<div class="hero-streak">🔥 <span id="heroStreak">0</span> day streak</div>
+<div class="hero-prog"><div class="hero-prog-bar"><div class="hero-prog-fill" id="heroFill" style="width:0%"></div></div><div class="hero-prog-txt" id="heroProgTxt">Start your morning session</div></div>
+</div>
+<div class="sect">Today — 2 Sessions</div>
+<div id="sessionList"></div>
+<div class="sect">Course Progress</div>
+<div class="card flat">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:12px;color:var(--ink3);font-weight:600">30-day course</span><span style="font-size:13px;font-weight:700;color:var(--acc)" id="coursePct">0%</span></div>
+<div class="prog"><div class="prog-f" id="courseFill" style="width:0%"></div></div>
+<div style="font-size:11px;color:var(--ink3);margin-top:8px" id="courseTxt">Day 1 of 30 • 0 words learned</div>
+</div>
+</div>
+
+<!-- LEARN (rules) -->
+<div class="scr" id="scr-learn">
+<div class="h1">📖 Grammar</div>
+<div class="sub">The 5 tenses, your rules, and every word. Tap to expand and listen.</div>
+<div class="sect">⏳ The 5 Tenses You Actually Need</div>
+<div id="tenseList"></div>
+<div class="sect">🤔 Which Tense? Quick Answer</div>
+<div class="card flat" id="tenseGuide"></div>
+<div class="sect">⚠️ Most Common Mistakes</div>
+<div class="card flat" id="tenseMistakes"></div>
+<div class="sect">Grammar Rules</div>
+<div id="ruleList"></div>
+<div class="sect">All Words (<span id="vocabCount">300</span>)</div>
+<div class="sub">Every word in the course. Tap 🔊 to hear.</div>
+<input id="vocabSearch" oninput="filterVocab()" placeholder="🔍 Search a word..." style="width:100%;padding:11px 14px;border-radius:12px;border:1.5px solid var(--brd2);background:var(--s1);color:var(--ink);font-family:inherit;font-size:14px;outline:none;margin-bottom:12px">
+<div id="vocabBrowse"></div>
+</div>
+
+<!-- PRACTICE -->
+<div class="scr" id="scr-practice">
+<div class="h1">🎮 Free Practice</div>
+<div class="sub">Practice any game anytime. Daily sessions are on the Home tab.</div>
+<div class="seg" id="practiceSeg">
+<button class="seg-btn on" onclick="setPractice('cards')">🃏 Cards</button>
+<button class="seg-btn" onclick="setPractice('match')">🔗 Match</button>
+<button class="seg-btn" onclick="setPractice('gap')">⬜ Gap</button>
+<button class="seg-btn" onclick="setPractice('order')">🔀 Order</button>
+</div>
+<div class="seg" id="practiceSeg2" style="margin-top:-6px">
+<button class="seg-btn" onclick="setPractice('translate')">✍️ Translate</button>
+<button class="seg-btn" onclick="setPractice('quiz')">❓ Quiz</button>
+<button class="seg-btn" onclick="setPractice('speak')">🎤 Speak</button>
+<button class="seg-btn" onclick="setPractice('dict')">👂 Dictation</button>
+</div>
+<div class="pills" id="practiceTopics" style="margin-top:6px"></div>
+<div id="gameMount"></div>
+</div>
+
+<!-- PROGRESS -->
+<div class="scr" id="scr-stats">
+<div class="h1">📊 Progress</div>
+<div class="sub">Your streak, stats, and week-over-week growth.</div>
+<div class="streak-big"><div class="streak-n" id="stStreak">0</div><div class="streak-l">Day Streak 🔥</div></div>
+<button class="btn primary" id="markBtn" onclick="markTodayManual()" style="margin-bottom:14px">✓ Mark today practiced</button>
+<div class="stat-grid" id="statGrid"></div>
+<div class="sect">This Week vs Last Week</div>
+<div class="card flat"><div id="cmpList"></div></div>
+<div class="sect">Spaced Repetition</div>
+<div id="srsList"></div>
+<div class="sect">Practice Heatmap</div>
+<div class="card flat"><div class="heat-grid" id="heatGrid"></div></div>
+<div class="sect">Grammar Checklist</div>
+<div class="cl-bar-row"><div class="prog" style="flex:1"><div class="prog-f g" id="clFill" style="width:0%"></div></div><div class="cl-pct" id="clPct">0/10</div></div>
+<div id="clList"></div>
+</div>
+</div>
+
+<nav class="bnav">
+<button class="nb on" onclick="go('home')" id="nb-home"><span class="ic">🏠</span>Today</button>
+<button class="nb" onclick="go('learn')" id="nb-learn"><span class="ic">📖</span>Rules</button>
+<button class="nb" onclick="go('practice')" id="nb-practice"><span class="ic">🎮</span>Practice</button>
+<button class="nb" onclick="go('stats')" id="nb-stats"><span class="ic">📊</span>Progress</button>
+</nav>
+
+<div class="modal-bg" id="menuModal" onclick="if(event.target===this)closeMenu()">
+<div class="modal">
+<div class="modal-h">Settings</div>
+<div class="modal-sub">English Daily — 30-day intensive course</div>
+<button class="btn ghost" onclick="toggleTheme();closeMenu()" style="margin-bottom:9px">🌓 Switch light / dark theme</button>
+<button class="btn ghost" onclick="testReminders()" style="margin-bottom:9px">🔔 Enable daily reminders</button>
+<button class="btn ghost" onclick="exportData()" style="margin-bottom:9px">💾 Export progress (backup)</button>
+<button class="btn ghost" onclick="document.getElementById('importFile').click()" style="margin-bottom:9px">📥 Import progress (restore)</button>
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+<button class="btn ghost" onclick="if(confirm('Reset ALL progress? Cannot be undone.')){localStorage.clear();location.reload();}" style="margin-bottom:9px;color:var(--red)">🗑 Reset everything</button>
+<button class="btn primary" onclick="closeMenu()">Close</button>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var RULES=[
+{num:1,name:"did/didn't + BASE FORM",tip:"DID shows past. After did/didn't/does/doesn't — ALWAYS base form.",pairs:[["didn't went","didn't GO"],["doesn't knows","doesn't KNOW"]],ex:"I <b>didn't go</b>. She <b>doesn't know</b>.",speak:["He didn't go to work.","She didn't write the email.","They didn't know about it.","She doesn't check emails on weekends."]},
+{num:2,name:"he/she/it + VERB-S",tip:"Third person singular ALWAYS gets -S. Have→has, do→does.",pairs:[["She enjoy","She enjoyS"],["He have","He HAS"]],ex:"She <b>enjoys</b> reading. He <b>has</b> experience.",speak:["She enjoys working remotely.","He has a lot of experience.","It works well on mobile.","She doesn't agree with it."]},
+{num:3,name:"Fixed Prepositions",tip:"Afraid OF. Good AT. Interested IN. Married TO. Responsible FOR. Agree WITH.",pairs:[["afraid FROM","afraid OF"],["good IN math","good AT math"]],ex:"<b>Good at</b> writing. <b>Responsible for</b> the team.",speak:["She is good at creating content.","I am afraid of missing deadlines.","He is interested in marketing.","I am responsible for four accounts."]},
+{num:4,name:"FOR vs SINCE",tip:"FOR = how long (period). SINCE = from when (start point). SINCE needs Present Perfect.",pairs:[["since two hours","FOR two hours"],["for 2020","SINCE 2020"]],ex:"Worked here <b>for</b> two years. Lived here <b>since</b> 2022.",speak:["I have been here for two hours.","She has worked there since January.","We have managed it for six months.","I have studied English for three months."]},
+{num:5,name:"FEWER vs LESS",tip:"FEWER + countable (people, posts). LESS + uncountable (time, money). Many = are.",pairs:[["less people","FEWER people"],["There IS many","There ARE many"]],ex:"<b>Fewer</b> people. <b>Less</b> money. There <b>are</b> many.",speak:["There are fewer people than before.","We have less time than I thought.","She made fewer mistakes this week.","There is less money in the budget."]},
+{num:6,name:"-ED vs -ING adjectives",tip:"-ED = how YOU feel. -ING = what CAUSES the feeling.",pairs:[["I am boring","I am borED"],["film is bored","film is borING"]],ex:"I am <b>bored</b>. The meeting is <b>boring</b>.",speak:["I was bored during the call.","The presentation was really boring.","She felt confused by the brief.","I was excited about the launch."]},
+{num:7,name:"VERB + V-ING (Gerund)",tip:"suggest, enjoy, insist on, look forward to, used to — always + V-ING.",pairs:[["suggest to go","suggest GOING"],["look forward to meet","forward to meetING"]],ex:"<b>Suggested going</b>. <b>Look forward to hearing</b>.",speak:["She suggested going over the brief.","I look forward to hearing from you.","He insisted on paying.","I am used to managing accounts."]},
+{num:8,name:"WHEN/IF + Present Simple",tip:"After when/if/before/after about the future — Present Simple, NOT will.",pairs:[["when I WILL arrive","when I ARRIVE"],["if it WILL rain","if it RAINS"]],ex:"Call you <b>when I arrive</b>. <b>If it performs</b> well, we scale.",speak:["I will call you when I arrive.","If the campaign performs well, we scale it.","I will send it after I finish.","Wait until the client approves."]},
+{num:9,name:"TELL vs SAY / EXPLAIN",tip:"TELL + person. SAY + thing + TO person. EXPLAIN + thing + TO person.",pairs:[["she SAID ME","she TOLD ME"],["explain ME","explain TO ME"]],ex:"She <b>told me</b>. He <b>explained it to</b> me.",speak:["She told me about the brief.","He explained the strategy to the client.","The client gave us freedom.","She told us to wait."]},
+{num:10,name:"NEWS + Age + ENOUGH + ONE OF",tip:"news IS. Age = I AM 21. ENOUGH after adjective. One of the best + PLURAL.",pairs:[["news ARE","news IS"],["I HAVE 21","I AM 21"],["ENOUGH strong","strong ENOUGH"]],ex:"The <b>news is</b> good. I <b>am</b> 21. Strong <b>enough</b>.",speak:["The news is very important.","I am twenty-one years old.","The copy is strong enough.","She is one of the best strategists."]}
+];
+/* THE 5 TENSES — cheat sheet (en + ru), tap to hear */
+var TENSES=[
+{name:"Present Simple",use:"HABITS & FACTS",ru:"привычки и факты",color:"acc",
+form:"I/you/they + verb · he/she/it + verb-S",
+forms:["I work.","She works.","He manages."],
+signals:["every day","always","usually","often","never","in general"],
+ex:[
+{en:"I manage four brands every day.",ru:"Я веду четыре бренда каждый день."},
+{en:"She writes content for LinkedIn.",ru:"Она пишет контент для LinkedIn."},
+{en:"I don't use TikTok for work.",ru:"Я не использую TikTok для работы."}]},
+{name:"Present Continuous",use:"RIGHT NOW / TEMPORARY",ru:"прямо сейчас / временно",color:"grn",
+form:"am/is/are + verb-ING",
+forms:["I am working.","She is working.","They are working."],
+signals:["now","right now","at the moment","today","this week","currently"],
+ex:[
+{en:"I am working on the report right now.",ru:"Я сейчас работаю над отчётом."},
+{en:"We are launching a new campaign this week.",ru:"Мы запускаем новую кампанию на этой неделе."},
+{en:"She is not answering her messages.",ru:"Она не отвечает на сообщения."}]},
+{name:"Past Simple",use:"FINISHED ACTION",ru:"законченное действие",color:"red",
+form:"verb + -ED · or irregular form",
+forms:["worked / wrote / went","saw / made"],
+signals:["yesterday","last week","last month","in 2022","ago","on Monday"],
+ex:[
+{en:"I posted three times last week.",ru:"Я опубликовал три поста на прошлой неделе."},
+{en:"The campaign performed well last month.",ru:"Кампания хорошо сработала в прошлом месяце."},
+{en:"I didn't see her message yesterday.",ru:"Я не видел её сообщение вчера."}]},
+{name:"Present Perfect",use:"EXPERIENCE / UNTIL NOW",ru:"опыт / до сих пор",color:"gold",
+form:"have/has + past participle",
+forms:["I have worked.","She has finished.","We have launched."],
+signals:["ever","never","already","yet","just","since","for"],
+ex:[
+{en:"I have managed this account for 2 years.",ru:"Я веду этот аккаунт уже 2 года."},
+{en:"She has just sent the report.",ru:"Она только что отправила отчёт."},
+{en:"We haven't received feedback yet.",ru:"Мы ещё не получили обратную связь."}]},
+{name:"Future (will / going to)",use:"PLANS & DECISIONS",ru:"планы и решения",color:"acc",
+form:"will + verb (decision now) · going to + verb (plan made)",
+forms:["I will call.","I am going to launch tomorrow."],
+signals:["tomorrow","next week","soon","in the future","I plan to"],
+ex:[
+{en:"I will send you the brief today.",ru:"Я пришлю тебе бриф сегодня."},
+{en:"We are going to launch the campaign next Monday.",ru:"Мы собираемся запустить кампанию в следующий понедельник."},
+{en:"I won't post until the design is ready.",ru:"Я не буду публиковать, пока дизайн не будет готов."}]}
+];
+var TENSE_GUIDE=[
+{q:"Every day / always / usually?",a:"Present Simple",ex:"I manage · I write"},
+{q:"Right now / this week?",a:"Present Continuous",ex:"I am working · we are launching"},
+{q:"Yesterday / finished action?",a:"Past Simple",ex:"I posted · she sent · we met"},
+{q:"Experience / until now?",a:"Present Perfect",ex:"I have worked here for… · she has just…"},
+{q:"Future / a plan?",a:"will / going to",ex:"I will call · we are going to launch"}
+];
+var TENSE_MISTAKES=[
+{w:"I have seen her yesterday",r:"I saw her yesterday",t:"Never use <b>yesterday</b> with Present Perfect. Yesterday = Past Simple, always."},
+{w:"when I will arrive",r:"when I arrive",t:"After <b>when / if</b> about the future → Present Simple."},
+{w:"since 2 years",r:"for 2 years",t:"<b>Since</b> = starting point (since 2020). <b>For</b> = duration (for 2 years)."},
+{w:"She work here",r:"She works here",t:"<b>He / she / it</b> always adds -S. She works. He writes. It costs."},
+{w:"she didn't went",r:"she didn't go",t:"After <b>didn't / doesn't</b> → base form."}
+];
+var VOCAB=[{w:"explicit",r:"ясный, чёткий",m:"Very clear, no confusion.",e:"An <b>explicit</b> brief.",day:1},
+{w:"ambiguous",r:"двусмысленный",m:"Can mean two things.",e:"An <b>ambiguous</b> reply.",day:1},
+{w:"persuasive",r:"убедительный",m:"Makes people agree.",e:"<b>Persuasive</b> copy.",day:1},
+{w:"constructive",r:"конструктивный",m:"Helpful, shows how to improve.",e:"<b>Constructive</b> feedback.",day:1},
+{w:"comprehensive",r:"всесторонний",m:"Covers everything.",e:"A <b>comprehensive</b> report.",day:1},
+{w:"significant",r:"значительный",m:"Big enough to matter.",e:"A <b>significant</b> result.",day:1},
+{w:"efficient",r:"эффективный",m:"No waste of time.",e:"An <b>efficient</b> workflow.",day:1},
+{w:"proactive",r:"упреждающий",m:"Act before problems happen.",e:"A <b>proactive</b> approach.",day:1},
+{w:"straightforward",r:"простой, понятный",m:"Easy to understand.",e:"A <b>straightforward</b> task.",day:1},
+{w:"composed",r:"спокойный, собранный",m:"Calm and in control.",e:"She stayed <b>composed</b>.",day:1},
+{w:"groundbreaking",r:"новаторский",m:"Completely new.",e:"A <b>groundbreaking</b> idea.",day:2},
+{w:"exhausted",r:"измождённый",m:"Extremely tired.",e:"Totally <b>exhausted</b>.",day:2},
+{w:"evasive",r:"уклончивый",m:"Avoids answering.",e:"An <b>evasive</b> answer.",day:2},
+{w:"outstanding",r:"выдающийся",m:"So good it stands out.",e:"<b>Outstanding</b> work.",day:2},
+{w:"hasty",r:"поспешный",m:"Too fast, not enough thought.",e:"A <b>hasty</b> decision.",day:2},
+{w:"impartial",r:"беспристрастный",m:"Fair, no side.",e:"An <b>impartial</b> view.",day:2},
+{w:"thorough",r:"тщательный",m:"Careful with every detail.",e:"A <b>thorough</b> check.",day:2},
+{w:"profound",r:"глубокий",m:"Very deep in meaning.",e:"A <b>profound</b> impact.",day:2},
+{w:"harsh",r:"резкий, жёсткий",m:"Strong and almost cruel.",e:"<b>Harsh</b> words.",day:2},
+{w:"engaging",r:"увлекательный",m:"Keeps attention.",e:"An <b>engaging</b> post.",day:2},
+{w:"backlash",r:"негативная реакция",m:"Strong negative reaction.",e:"Public <b>backlash</b>.",day:3},
+{w:"tone-deaf",r:"бестактный",m:"Not reading the room.",e:"A <b>tone-deaf</b> ad.",day:3},
+{w:"engagement",r:"вовлечённость",m:"Likes, comments, shares.",e:"High <b>engagement</b>.",day:3},
+{w:"alienate",r:"оттолкнуть",m:"Push your audience away.",e:"Don't <b>alienate</b> users.",day:3},
+{w:"backfire",r:"дать обратный эффект",m:"Plan hurts you instead.",e:"It <b>backfired</b>.",day:3},
+{w:"misleading",r:"вводящий в заблуждение",m:"Makes people believe lies.",e:"<b>Misleading</b> claims.",day:3},
+{w:"sentiment",r:"настроение аудитории",m:"How people feel.",e:"Brand <b>sentiment</b>.",day:3},
+{w:"credibility",r:"доверие",m:"People trust you.",e:"Build <b>credibility</b>.",day:3},
+{w:"boycott",r:"бойкот",m:"Stop buying as protest.",e:"They <b>boycotted</b> it.",day:3},
+{w:"surveillance",r:"слежка",m:"Watching people secretly.",e:"<b>Surveillance</b> fears.",day:3},
+{w:"roll out",r:"запустить",m:"Launch something new.",e:"<b>Roll out</b> a feature.",day:4},
+{w:"flesh out",r:"добавить деталей",m:"Add more detail.",e:"<b>Flesh out</b> the plan.",day:4},
+{w:"filter out",r:"отфильтровать",m:"Remove what you don't want.",e:"<b>Filter out</b> spam.",day:4},
+{w:"pull off",r:"провернуть",m:"Do something hard well.",e:"She <b>pulled</b> it <b>off</b>.",day:4},
+{w:"scale back",r:"сократить",m:"Reduce size or spending.",e:"<b>Scale back</b> costs.",day:4},
+{w:"narrow down",r:"сузить выбор",m:"Reduce to fewer options.",e:"<b>Narrow down</b> choices.",day:4},
+{w:"keep up with",r:"не отставать",m:"Stay current.",e:"<b>Keep up with</b> trends.",day:4},
+{w:"reach out",r:"связаться",m:"Contact someone first.",e:"<b>Reach out</b> to them.",day:4},
+{w:"brush up on",r:"подтянуть",m:"Refresh old skills.",e:"<b>Brush up on</b> grammar.",day:4},
+{w:"follow through",r:"довести до конца",m:"Finish what you started.",e:"Always <b>follow through</b>.",day:4},
+{w:"look into",r:"изучить",m:"Investigate a problem.",e:"<b>Look into</b> the issue.",day:5},
+{w:"tweak",r:"немного изменить",m:"Make small adjustments.",e:"<b>Tweak</b> the design.",day:5},
+{w:"come across",r:"производить впечатление",m:"Seem a certain way.",e:"<b>Comes across</b> as kind.",day:5},
+{w:"read into",r:"искать скрытый смысл",m:"Find meaning that isn't there.",e:"Don't <b>read into</b> it.",day:5},
+{w:"take to",r:"воспринять",m:"Start to like.",e:"They <b>took to</b> it.",day:5},
+{w:"get the ball rolling",r:"запустить процесс",m:"Start something.",e:"Let's <b>get the ball rolling</b>.",day:5},
+{w:"cut to the chase",r:"перейти к сути",m:"Get to the point.",e:"<b>Cut to the chase</b>.",day:5},
+{w:"on the same page",r:"на одной волне",m:"Everyone agrees.",e:"Are we <b>on the same page</b>?",day:5},
+{w:"shooting in the dark",r:"действовать вслепую",m:"Acting without info.",e:"Just <b>shooting in the dark</b>.",day:5},
+{w:"green light",r:"зелёный свет",m:"Permission to go.",e:"Got the <b>green light</b>.",day:5},
+{w:"hit the nail on the head",r:"попасть в точку",m:"Say exactly the right thing.",e:"You <b>hit the nail on the head</b>.",day:6},
+{w:"uphill battle",r:"тяжёлая борьба",m:"A very hard task.",e:"An <b>uphill battle</b>.",day:6},
+{w:"catch fire",r:"стать вирусным",m:"Become popular fast.",e:"The post <b>caught fire</b>.",day:6},
+{w:"stay on top of",r:"держать под контролем",m:"Keep control.",e:"<b>Stay on top of</b> tasks.",day:6},
+{w:"the bottom line",r:"суть, итог",m:"The key point.",e:"<b>The bottom line</b>: results.",day:6},
+{w:"inevitable",r:"неизбежный",m:"Sure to happen.",e:"An <b>inevitable</b> change.",day:6},
+{w:"subtle",r:"тонкий, едва заметный",m:"Hard to notice.",e:"A <b>subtle</b> difference.",day:6},
+{w:"reluctant",r:"неохотный",m:"Not wanting to do it.",e:"<b>Reluctant</b> to agree.",day:6},
+{w:"deliberate",r:"намеренный",m:"Done on purpose.",e:"A <b>deliberate</b> choice.",day:6},
+{w:"vague",r:"расплывчатый",m:"Not clear or exact.",e:"A <b>vague</b> idea.",day:6},
+{w:"coherent",r:"связный, логичный",m:"Clear and logical.",e:"A <b>coherent</b> plan.",day:7},
+{w:"redundant",r:"излишний",m:"Not needed, extra.",e:"A <b>redundant</b> step.",day:7},
+{w:"feasible",r:"осуществимый",m:"Possible to do.",e:"A <b>feasible</b> plan.",day:7},
+{w:"robust",r:"надёжный, крепкий",m:"Strong, won't fail.",e:"A <b>robust</b> system.",day:7},
+{w:"versatile",r:"универсальный",m:"Many uses.",e:"A <b>versatile</b> tool.",day:7},
+{w:"meticulous",r:"дотошный",m:"Extremely careful.",e:"<b>Meticulous</b> notes.",day:7},
+{w:"concise",r:"краткий",m:"Short and clear.",e:"Keep it <b>concise</b>.",day:7},
+{w:"intuitive",r:"интуитивный",m:"Easy to use naturally.",e:"An <b>intuitive</b> app.",day:7},
+{w:"compelling",r:"неотразимый",m:"Very convincing.",e:"A <b>compelling</b> story.",day:7},
+{w:"plausible",r:"правдоподобный",m:"Seems true.",e:"A <b>plausible</b> excuse.",day:7},
+{w:"arbitrary",r:"произвольный",m:"Based on chance, no reason.",e:"An <b>arbitrary</b> rule.",day:8},
+{w:"inherent",r:"присущий",m:"A natural part of.",e:"An <b>inherent</b> risk.",day:8},
+{w:"nuanced",r:"с нюансами",m:"With fine details.",e:"A <b>nuanced</b> take.",day:8},
+{w:"tedious",r:"утомительный",m:"Boring and long.",e:"A <b>tedious</b> task.",day:8},
+{w:"trivial",r:"незначительный",m:"Not important.",e:"A <b>trivial</b> issue.",day:8},
+{w:"substantial",r:"существенный",m:"Large, important.",e:"<b>Substantial</b> growth.",day:8},
+{w:"scarce",r:"дефицитный",m:"Hard to find.",e:"Time is <b>scarce</b>.",day:8},
+{w:"abundant",r:"изобильный",m:"More than enough.",e:"<b>Abundant</b> data.",day:8},
+{w:"diverse",r:"разнообразный",m:"Many different kinds.",e:"A <b>diverse</b> team.",day:8},
+{w:"consistent",r:"последовательный",m:"Always the same.",e:"Stay <b>consistent</b>.",day:8},
+{w:"contradictory",r:"противоречивый",m:"Things that clash.",e:"<b>Contradictory</b> data.",day:9},
+{w:"counterintuitive",r:"контринтуитивный",m:"Opposite of what you'd expect.",e:"A <b>counterintuitive</b> result.",day:9},
+{w:"pragmatic",r:"прагматичный",m:"Practical, realistic.",e:"A <b>pragmatic</b> approach.",day:9},
+{w:"skeptical",r:"скептичный",m:"Doubting.",e:"<b>Skeptical</b> of claims.",day:9},
+{w:"ambitious",r:"амбициозный",m:"Wants big success.",e:"An <b>ambitious</b> goal.",day:9},
+{w:"resilient",r:"устойчивый",m:"Recovers from problems.",e:"A <b>resilient</b> brand.",day:9},
+{w:"tentative",r:"предварительный",m:"Not final.",e:"A <b>tentative</b> plan.",day:9},
+{w:"implicit",r:"подразумеваемый",m:"Implied, not stated.",e:"An <b>implicit</b> rule.",day:9},
+{w:"rigorous",r:"строгий, тщательный",m:"Very strict and careful.",e:"<b>Rigorous</b> testing.",day:9},
+{w:"seamless",r:"бесшовный",m:"Smooth, no breaks.",e:"A <b>seamless</b> flow.",day:9},
+{w:"inevitably",r:"неизбежно",m:"For sure, can't avoid.",e:"It will <b>inevitably</b> change.",day:10},
+{w:"predominantly",r:"преимущественно",m:"Mostly.",e:"<b>Predominantly</b> female.",day:10},
+{w:"simultaneously",r:"одновременно",m:"At the same time.",e:"Run them <b>simultaneously</b>.",day:10},
+{w:"subsequently",r:"впоследствии",m:"After that.",e:"<b>Subsequently</b> approved.",day:10},
+{w:"nonetheless",r:"тем не менее",m:"Still, even so.",e:"Hard; <b>nonetheless</b> worth it.",day:10},
+{w:"albeit",r:"хотя и",m:"Although.",e:"Good, <b>albeit</b> slow.",day:10},
+{w:"notwithstanding",r:"несмотря на",m:"In spite of.",e:"<b>Notwithstanding</b> delays.",day:10},
+{w:"henceforth",r:"впредь",m:"From now on.",e:"<b>Henceforth</b> we test first.",day:10},
+{w:"prerequisite",r:"предпосылка",m:"Needed first.",e:"A <b>prerequisite</b> skill.",day:10},
+{w:"benchmark",r:"эталон",m:"A standard to compare.",e:"Set a <b>benchmark</b>.",day:10},
+{w:"milestone",r:"веха",m:"An important point.",e:"A key <b>milestone</b>.",day:11},
+{w:"leverage",r:"использовать (выгоду)",m:"Use to advantage.",e:"<b>Leverage</b> your data.",day:11},
+{w:"streamline",r:"оптимизировать",m:"Make more efficient.",e:"<b>Streamline</b> the process.",day:11},
+{w:"optimize",r:"оптимизировать",m:"Make as good as possible.",e:"<b>Optimize</b> the ad.",day:11},
+{w:"allocate",r:"распределять",m:"Give out for a use.",e:"<b>Allocate</b> budget.",day:11},
+{w:"prioritize",r:"расставлять приоритеты",m:"Put first by importance.",e:"<b>Prioritize</b> tasks.",day:11},
+{w:"delegate",r:"делегировать",m:"Give work to others.",e:"<b>Delegate</b> the task.",day:11},
+{w:"facilitate",r:"способствовать",m:"Make easier.",e:"<b>Facilitate</b> growth.",day:11},
+{w:"implement",r:"внедрять",m:"Put into action.",e:"<b>Implement</b> the plan.",day:11},
+{w:"evaluate",r:"оценивать",m:"Judge the value.",e:"<b>Evaluate</b> results.",day:11},
+{w:"anticipate",r:"предвидеть",m:"Expect in advance.",e:"<b>Anticipate</b> needs.",day:12},
+{w:"undermine",r:"подрывать",m:"Weaken secretly.",e:"<b>Undermine</b> trust.",day:12},
+{w:"reinforce",r:"укреплять",m:"Make stronger.",e:"<b>Reinforce</b> the message.",day:12},
+{w:"mitigate",r:"смягчать",m:"Make less bad.",e:"<b>Mitigate</b> risk.",day:12},
+{w:"comply",r:"соблюдать",m:"Follow rules.",e:"<b>Comply</b> with policy.",day:12},
+{w:"entail",r:"влечь за собой",m:"Involve as a result.",e:"What does it <b>entail</b>?",day:12},
+{w:"yield",r:"приносить (результат)",m:"Produce or give.",e:"<b>Yield</b> results.",day:12},
+{w:"dilute",r:"разбавлять",m:"Make weaker.",e:"Don't <b>dilute</b> the brand.",day:12},
+{w:"amplify",r:"усиливать",m:"Make louder/bigger.",e:"<b>Amplify</b> the reach.",day:12},
+{w:"refine",r:"совершенствовать",m:"Improve by small changes.",e:"<b>Refine</b> the copy.",day:12},
+{w:"integrate",r:"интегрировать",m:"Combine into one.",e:"<b>Integrate</b> the tools.",day:13},
+{w:"sustain",r:"поддерживать",m:"Keep going over time.",e:"<b>Sustain</b> growth.",day:13},
+{w:"accumulate",r:"накапливать",m:"Build up over time.",e:"<b>Accumulate</b> followers.",day:13},
+{w:"diminish",r:"уменьшать(ся)",m:"Become smaller.",e:"Returns <b>diminish</b>.",day:13},
+{w:"compensate",r:"компенсировать",m:"Make up for.",e:"<b>Compensate</b> for it.",day:13},
+{w:"correlate",r:"соотноситься",m:"Move together.",e:"They <b>correlate</b>.",day:13},
+{w:"deteriorate",r:"ухудшаться",m:"Get worse.",e:"Quality <b>deteriorates</b>.",day:13},
+{w:"fluctuate",r:"колебаться",m:"Go up and down.",e:"Prices <b>fluctuate</b>.",day:13},
+{w:"attain",r:"достигать",m:"Reach a goal.",e:"<b>Attain</b> the target.",day:13},
+{w:"retain",r:"удерживать",m:"Keep.",e:"<b>Retain</b> customers.",day:13},
+{w:"acquire",r:"приобретать",m:"Get or buy.",e:"<b>Acquire</b> new users.",day:14},
+{w:"endorse",r:"поддерживать публично",m:"Publicly support.",e:"<b>Endorse</b> a product.",day:14},
+{w:"advocate",r:"выступать за",m:"Argue in favor.",e:"<b>Advocate</b> for change.",day:14},
+{w:"emphasize",r:"подчёркивать",m:"Give importance to.",e:"<b>Emphasize</b> the value.",day:14},
+{w:"elaborate",r:"подробно объяснять",m:"Explain in detail.",e:"Please <b>elaborate</b>.",day:14},
+{w:"clarify",r:"прояснять",m:"Make clear.",e:"<b>Clarify</b> the brief.",day:14},
+{w:"convey",r:"передавать (смысл)",m:"Communicate.",e:"<b>Convey</b> the message.",day:14},
+{w:"articulate",r:"чётко выражать",m:"Express clearly.",e:"<b>Articulate</b> your point.",day:14},
+{w:"portray",r:"изображать",m:"Show or describe.",e:"<b>Portray</b> the brand well.",day:14},
+{w:"perceive",r:"воспринимать",m:"Notice, see as.",e:"How they <b>perceive</b> us.",day:14},
+{w:"interpret",r:"толковать",m:"Explain the meaning.",e:"<b>Interpret</b> the data.",day:15},
+{w:"assess",r:"оценивать",m:"Judge carefully.",e:"<b>Assess</b> the risk.",day:15},
+{w:"verify",r:"проверять",m:"Confirm it's true.",e:"<b>Verify</b> the facts.",day:15},
+{w:"validate",r:"подтверждать",m:"Prove correct.",e:"<b>Validate</b> the idea.",day:15},
+{w:"undertake",r:"предпринимать",m:"Start and do.",e:"<b>Undertake</b> a project.",day:15},
+{w:"pursue",r:"преследовать (цель)",m:"Chase a goal.",e:"<b>Pursue</b> the lead.",day:15},
+{w:"strive",r:"стремиться",m:"Try very hard.",e:"<b>Strive</b> for quality.",day:15},
+{w:"thrive",r:"процветать",m:"Grow strongly.",e:"Brands <b>thrive</b> here.",day:15},
+{w:"excel",r:"преуспевать",m:"Be very good.",e:"<b>Excel</b> at content.",day:15},
+{w:"comprise",r:"состоять из",m:"Be made up of.",e:"The team <b>comprises</b> five.",day:15},
+{w:"constitute",r:"составлять",m:"Make up.",e:"They <b>constitute</b> a risk.",day:16},
+{w:"designate",r:"назначать",m:"Officially assign.",e:"<b>Designate</b> a lead.",day:16},
+{w:"formulate",r:"формулировать",m:"Create carefully.",e:"<b>Formulate</b> a plan.",day:16},
+{w:"devise",r:"разрабатывать",m:"Invent a plan.",e:"<b>Devise</b> a strategy.",day:16},
+{w:"conceive",r:"задумывать",m:"Think up an idea.",e:"<b>Conceive</b> a concept.",day:16},
+{w:"contemplate",r:"обдумывать",m:"Think about deeply.",e:"<b>Contemplate</b> options.",day:16},
+{w:"scrutinize",r:"внимательно изучать",m:"Examine closely.",e:"<b>Scrutinize</b> the data.",day:16},
+{w:"speculate",r:"строить догадки",m:"Guess without proof.",e:"Don't <b>speculate</b>.",day:16},
+{w:"presume",r:"предполагать",m:"Assume true.",e:"I <b>presume</b> so.",day:16},
+{w:"infer",r:"делать вывод",m:"Conclude from clues.",e:"<b>Infer</b> the meaning.",day:16},
+{w:"deduce",r:"выводить",m:"Work out logically.",e:"<b>Deduce</b> the cause.",day:17},
+{w:"acknowledge",r:"признавать",m:"Admit true.",e:"<b>Acknowledge</b> the issue.",day:17},
+{w:"concede",r:"уступать",m:"Admit defeat.",e:"<b>Concede</b> the point.",day:17},
+{w:"dispute",r:"оспаривать",m:"Argue against.",e:"<b>Dispute</b> the claim.",day:17},
+{w:"refute",r:"опровергать",m:"Prove wrong.",e:"<b>Refute</b> the argument.",day:17},
+{w:"justify",r:"оправдывать",m:"Show it's right.",e:"<b>Justify</b> the cost.",day:17},
+{w:"contend",r:"утверждать",m:"Claim strongly.",e:"I <b>contend</b> it works.",day:17},
+{w:"assert",r:"заявлять",m:"State firmly.",e:"<b>Assert</b> your view.",day:17},
+{w:"imply",r:"подразумевать",m:"Suggest without saying.",e:"What does it <b>imply</b>?",day:17},
+{w:"denote",r:"обозначать",m:"Be a sign of.",e:"Red <b>denotes</b> danger.",day:17},
+{w:"constrain",r:"ограничивать",m:"Limit.",e:"Budget <b>constrains</b> us.",day:18},
+{w:"hinder",r:"мешать",m:"Slow down.",e:"Delays <b>hinder</b> work.",day:18},
+{w:"impede",r:"препятствовать",m:"Block progress.",e:"<b>Impede</b> growth.",day:18},
+{w:"jeopardize",r:"ставить под угрозу",m:"Put at risk.",e:"<b>Jeopardize</b> the deal.",day:18},
+{w:"compromise",r:"ставить под угрозу / компромисс",m:"Risk or settle.",e:"Don't <b>compromise</b> quality.",day:18},
+{w:"exploit",r:"использовать (выгодно)",m:"Use fully.",e:"<b>Exploit</b> the trend.",day:18},
+{w:"harness",r:"задействовать",m:"Control and use.",e:"<b>Harness</b> AI.",day:18},
+{w:"deploy",r:"развёртывать",m:"Put into use.",e:"<b>Deploy</b> the tool.",day:18},
+{w:"execute",r:"выполнять",m:"Carry out.",e:"<b>Execute</b> the plan.",day:18},
+{w:"administer",r:"управлять",m:"Run or manage.",e:"<b>Administer</b> accounts.",day:18},
+{w:"oversee",r:"контролировать",m:"Watch over.",e:"<b>Oversee</b> the team.",day:19},
+{w:"coordinate",r:"координировать",m:"Make work together.",e:"<b>Coordinate</b> the launch.",day:19},
+{w:"collaborate",r:"сотрудничать",m:"Work together.",e:"<b>Collaborate</b> closely.",day:19},
+{w:"negotiate",r:"вести переговоры",m:"Discuss a deal.",e:"<b>Negotiate</b> terms.",day:19},
+{w:"persuade",r:"убеждать",m:"Make someone agree.",e:"<b>Persuade</b> the client.",day:19},
+{w:"convince",r:"убеждать",m:"Make someone believe.",e:"<b>Convince</b> them.",day:19},
+{w:"compel",r:"вынуждать",m:"Force.",e:"<b>Compel</b> action.",day:19},
+{w:"deter",r:"удерживать (от)",m:"Stop by fear.",e:"<b>Deter</b> spammers.",day:19},
+{w:"dissuade",r:"отговаривать",m:"Talk out of.",e:"<b>Dissuade</b> them.",day:19},
+{w:"provoke",r:"провоцировать",m:"Cause a reaction.",e:"<b>Provoke</b> debate.",day:19},
+{w:"trigger",r:"запускать",m:"Cause to start.",e:"<b>Trigger</b> an alert.",day:20},
+{w:"induce",r:"побуждать",m:"Lead to.",e:"<b>Induce</b> clicks.",day:20},
+{w:"evoke",r:"вызывать (чувства)",m:"Bring out feelings.",e:"<b>Evoke</b> emotion.",day:20},
+{w:"instill",r:"прививать",m:"Slowly put in mind.",e:"<b>Instill</b> trust.",day:20},
+{w:"cultivate",r:"культивировать",m:"Grow over time.",e:"<b>Cultivate</b> an audience.",day:20},
+{w:"foster",r:"способствовать",m:"Help develop.",e:"<b>Foster</b> loyalty.",day:20},
+{w:"nurture",r:"взращивать",m:"Care for growth.",e:"<b>Nurture</b> leads.",day:20},
+{w:"enhance",r:"улучшать",m:"Make better.",e:"<b>Enhance</b> the design.",day:20},
+{w:"bolster",r:"поддерживать",m:"Strengthen.",e:"<b>Bolster</b> sales.",day:20},
+{w:"supplement",r:"дополнять",m:"Add to.",e:"<b>Supplement</b> income.",day:20},
+{w:"substitute",r:"заменять",m:"Use instead.",e:"<b>Substitute</b> the word.",day:21},
+{w:"eliminate",r:"устранять",m:"Remove fully.",e:"<b>Eliminate</b> errors.",day:21},
+{w:"eradicate",r:"искоренять",m:"Wipe out.",e:"<b>Eradicate</b> bugs.",day:21},
+{w:"alleviate",r:"облегчать",m:"Make less painful.",e:"<b>Alleviate</b> stress.",day:21},
+{w:"accommodate",r:"вмещать / угождать",m:"Make room for.",e:"<b>Accommodate</b> needs.",day:21},
+{w:"encompass",r:"охватывать",m:"Include all.",e:"<b>Encompass</b> everything.",day:21},
+{w:"entitle",r:"давать право",m:"Give a right.",e:"<b>Entitle</b> you to access.",day:21},
+{w:"attribute",r:"приписывать",m:"Say caused by.",e:"<b>Attribute</b> success to.",day:21},
+{w:"ascribe",r:"приписывать",m:"Credit to a cause.",e:"<b>Ascribe</b> it to luck.",day:21},
+{w:"comprehend",r:"понимать",m:"Fully understand.",e:"<b>Comprehend</b> the text.",day:21},
+{w:"discern",r:"различать",m:"See the difference.",e:"<b>Discern</b> the pattern.",day:22},
+{w:"distinguish",r:"отличать",m:"Tell apart.",e:"<b>Distinguish</b> A from B.",day:22},
+{w:"differentiate",r:"дифференцировать",m:"Make different.",e:"<b>Differentiate</b> the brand.",day:22},
+{w:"characterize",r:"характеризовать",m:"Describe the nature.",e:"<b>Characterize</b> the trend.",day:22},
+{w:"epitomize",r:"быть典型",m:"Be a perfect example.",e:"<b>Epitomize</b> success.",day:22},
+{w:"exemplify",r:"служить примером",m:"Be an example.",e:"<b>Exemplify</b> quality.",day:22},
+{w:"illustrate",r:"иллюстрировать",m:"Show with an example.",e:"<b>Illustrate</b> the point.",day:22},
+{w:"demonstrate",r:"демонстрировать",m:"Show clearly.",e:"<b>Demonstrate</b> value.",day:22},
+{w:"manifest",r:"проявлять(ся)",m:"Show clearly.",e:"Stress <b>manifests</b> here.",day:22},
+{w:"emerge",r:"появляться",m:"Come out.",e:"Trends <b>emerge</b> fast.",day:22},
+{w:"prevail",r:"преобладать",m:"Win or be common.",e:"Quality <b>prevails</b>.",day:23},
+{w:"persist",r:"сохраняться",m:"Keep going.",e:"Problems <b>persist</b>.",day:23},
+{w:"linger",r:"задерживаться",m:"Stay too long.",e:"Doubts <b>linger</b>.",day:23},
+{w:"dwindle",r:"убывать",m:"Slowly shrink.",e:"Funds <b>dwindle</b>.",day:23},
+{w:"surge",r:"резко расти",m:"Rise sharply.",e:"Traffic <b>surged</b>.",day:23},
+{w:"plummet",r:"резко падать",m:"Fall fast.",e:"Sales <b>plummeted</b>.",day:23},
+{w:"escalate",r:"обостряться",m:"Grow worse.",e:"Costs <b>escalate</b>.",day:23},
+{w:"intensify",r:"усиливаться",m:"Become stronger.",e:"Efforts <b>intensify</b>.",day:23},
+{w:"stagnate",r:"застаиваться",m:"Stop growing.",e:"Growth <b>stagnates</b>.",day:23},
+{w:"rebound",r:"восстанавливаться",m:"Recover.",e:"Sales <b>rebound</b>.",day:23},
+{w:"offset",r:"компенсировать",m:"Balance out.",e:"<b>Offset</b> the loss.",day:24},
+{w:"outweigh",r:"перевешивать",m:"Be more important.",e:"Pros <b>outweigh</b> cons.",day:24},
+{w:"overlap",r:"пересекаться",m:"Share parts.",e:"Tasks <b>overlap</b>.",day:24},
+{w:"coincide",r:"совпадать",m:"Happen together.",e:"Dates <b>coincide</b>.",day:24},
+{w:"converge",r:"сходиться",m:"Come together.",e:"Views <b>converge</b>.",day:24},
+{w:"diverge",r:"расходиться",m:"Go apart.",e:"Opinions <b>diverge</b>.",day:24},
+{w:"deviate",r:"отклоняться",m:"Go off course.",e:"<b>Deviate</b> from plan.",day:24},
+{w:"conform",r:"соответствовать",m:"Follow the norm.",e:"<b>Conform</b> to rules.",day:24},
+{w:"adhere",r:"придерживаться",m:"Stick to.",e:"<b>Adhere</b> to standards.",day:24},
+{w:"abide",r:"соблюдать",m:"Follow (rules).",e:"<b>Abide</b> by terms.",day:24},
+{w:"breach",r:"нарушать",m:"Break a rule.",e:"<b>Breach</b> the contract.",day:25},
+{w:"violate",r:"нарушать",m:"Break a law.",e:"<b>Violate</b> policy.",day:25},
+{w:"infringe",r:"посягать",m:"Break rights.",e:"<b>Infringe</b> copyright.",day:25},
+{w:"exempt",r:"освобождённый",m:"Free from a rule.",e:"<b>Exempt</b> from tax.",day:25},
+{w:"liable",r:"ответственный",m:"Legally responsible.",e:"<b>Liable</b> for damage.",day:25},
+{w:"accountable",r:"подотчётный",m:"Must answer for.",e:"<b>Accountable</b> for results.",day:25},
+{w:"imminent",r:"надвигающийся",m:"About to happen.",e:"An <b>imminent</b> launch.",day:25},
+{w:"prospective",r:"потенциальный",m:"Likely in future.",e:"A <b>prospective</b> client.",day:25},
+{w:"preliminary",r:"предварительный",m:"Before the main.",e:"<b>Preliminary</b> results.",day:25},
+{w:"ongoing",r:"продолжающийся",m:"Still happening.",e:"An <b>ongoing</b> project.",day:25},
+{w:"perpetual",r:"постоянный",m:"Never ending.",e:"<b>Perpetual</b> growth.",day:26},
+{w:"transient",r:"мимолётный",m:"Lasting briefly.",e:"A <b>transient</b> trend.",day:26},
+{w:"sporadic",r:"спорадический",m:"Now and then.",e:"<b>Sporadic</b> posts.",day:26},
+{w:"recurrent",r:"повторяющийся",m:"Happening again.",e:"A <b>recurrent</b> issue.",day:26},
+{w:"simultaneous",r:"одновременный",m:"At the same time.",e:"<b>Simultaneous</b> launches.",day:26},
+{w:"subsequent",r:"последующий",m:"Coming after.",e:"<b>Subsequent</b> steps.",day:26},
+{w:"preceding",r:"предыдущий",m:"Coming before.",e:"The <b>preceding</b> week.",day:26},
+{w:"ultimate",r:"конечный",m:"Final, greatest.",e:"The <b>ultimate</b> goal.",day:26},
+{w:"paramount",r:"первостепенный",m:"Most important.",e:"Trust is <b>paramount</b>.",day:26},
+{w:"crucial",r:"ключевой",m:"Extremely important.",e:"A <b>crucial</b> step.",day:26},
+{w:"pivotal",r:"решающий",m:"A turning point.",e:"A <b>pivotal</b> moment.",day:27},
+{w:"integral",r:"неотъемлемый",m:"Essential part.",e:"An <b>integral</b> role.",day:27},
+{w:"fundamental",r:"основополагающий",m:"Most basic.",e:"A <b>fundamental</b> rule.",day:27},
+{w:"marginal",r:"незначительный",m:"Very small.",e:"A <b>marginal</b> gain.",day:27},
+{w:"negligible",r:"ничтожный",m:"Too small to matter.",e:"A <b>negligible</b> effect.",day:27},
+{w:"considerable",r:"значительный",m:"Quite large.",e:"<b>Considerable</b> effort.",day:27},
+{w:"immense",r:"огромный",m:"Very large.",e:"<b>Immense</b> potential.",day:27},
+{w:"modest",r:"скромный",m:"Small, not large.",e:"A <b>modest</b> rise.",day:27},
+{w:"ample",r:"достаточный",m:"Plenty.",e:"<b>Ample</b> time.",day:27},
+{w:"adequate",r:"достаточный",m:"Enough.",e:"<b>Adequate</b> budget.",day:27},
+{w:"sufficient",r:"достаточный",m:"As much as needed.",e:"<b>Sufficient</b> data.",day:28},
+{w:"excessive",r:"чрезмерный",m:"Too much.",e:"<b>Excessive</b> spending.",day:28},
+{w:"minimal",r:"минимальный",m:"As little as possible.",e:"<b>Minimal</b> effort.",day:28},
+{w:"optimal",r:"оптимальный",m:"The best possible.",e:"The <b>optimal</b> time.",day:28},
+{w:"viable",r:"жизнеспособный",m:"Able to work.",e:"A <b>viable</b> option.",day:28},
+{w:"lucrative",r:"прибыльный",m:"Makes much money.",e:"A <b>lucrative</b> deal.",day:28},
+{w:"cost-effective",r:"экономичный",m:"Good value.",e:"A <b>cost-effective</b> plan.",day:28},
+{w:"profitable",r:"прибыльный",m:"Makes profit.",e:"A <b>profitable</b> month.",day:28},
+{w:"frugal",r:"экономный",m:"Careful with money.",e:"Be <b>frugal</b>.",day:28},
+{w:"affluent",r:"состоятельный",m:"Wealthy.",e:"An <b>affluent</b> market.",day:28},
+{w:"revenue",r:"выручка",m:"Money coming in.",e:"Monthly <b>revenue</b>.",day:29},
+{w:"expenditure",r:"расходы",m:"Money spent.",e:"Ad <b>expenditure</b>.",day:29},
+{w:"asset",r:"актив",m:"Something valuable.",e:"A key <b>asset</b>.",day:29},
+{w:"liability",r:"обязательство / помеха",m:"A debt or burden.",e:"A <b>liability</b> risk.",day:29},
+{w:"overhead",r:"накладные расходы",m:"Running costs.",e:"Low <b>overhead</b>.",day:29},
+{w:"turnover",r:"оборот",m:"Total sales / staff change.",e:"High <b>turnover</b>.",day:29},
+{w:"margin",r:"маржа",m:"Profit portion.",e:"A thin <b>margin</b>.",day:29},
+{w:"forecast",r:"прогноз",m:"Predict the future.",e:"Sales <b>forecast</b>.",day:29},
+{w:"metric",r:"показатель",m:"A measured number.",e:"A key <b>metric</b>.",day:29},
+{w:"threshold",r:"порог",m:"A starting limit.",e:"Reach the <b>threshold</b>.",day:29},
+{w:"trajectory",r:"траектория",m:"Path over time.",e:"Growth <b>trajectory</b>.",day:30},
+{w:"incentive",r:"стимул",m:"A reason to act.",e:"An <b>incentive</b> to buy.",day:30},
+{w:"initiative",r:"инициатива",m:"A new effort.",e:"A bold <b>initiative</b>.",day:30},
+{w:"endeavor",r:"начинание",m:"A serious effort.",e:"A new <b>endeavor</b>.",day:30},
+{w:"venture",r:"предприятие",m:"A risky project.",e:"A new <b>venture</b>.",day:30},
+{w:"strategy",r:"стратегия",m:"A long-term plan.",e:"A clear <b>strategy</b>.",day:30},
+{w:"tactic",r:"тактика",m:"A specific method.",e:"A smart <b>tactic</b>.",day:30},
+{w:"framework",r:"структура, рамки",m:"A basic structure.",e:"A useful <b>framework</b>.",day:30},
+{w:"paradigm",r:"парадигма",m:"A way of thinking.",e:"A new <b>paradigm</b>.",day:30},
+{w:"rationale",r:"обоснование",m:"The reason behind.",e:"The <b>rationale</b> is clear.",day:30}];
+/* SENTENCE BANK: used for gap-fill, word-order, translate, dictation. Each tied to vocab where possible. */
+var SENTENCES=[
+{en:"I manage four brands every day.",ru:"Я веду четыре бренда каждый день.",gap:"manage",opts:["manage","manages","managing","managed"]},
+{en:"She doesn't check emails on weekends.",ru:"Она не проверяет почту по выходным.",gap:"doesn't",opts:["don't","doesn't","didn't","isn't"]},
+{en:"I have worked here for two years.",ru:"Я работаю здесь уже два года.",gap:"for",opts:["since","for","from","during"]},
+{en:"The news is very important today.",ru:"Новости сегодня очень важные.",gap:"is",opts:["are","is","were","have"]},
+{en:"She suggested going over the brief.",ru:"Она предложила пройтись по брифу.",gap:"going",opts:["to go","going","go","went"]},
+{en:"If the campaign performs well, we will scale it.",ru:"Если кампания сработает хорошо, мы её масштабируем.",gap:"performs",opts:["will perform","performs","performed","performing"]},
+{en:"I look forward to hearing from you.",ru:"Жду вашего ответа.",gap:"hearing",opts:["hear","to hear","hearing","heard"]},
+{en:"We haven't received the feedback yet.",ru:"Мы ещё не получили обратную связь.",gap:"received",opts:["receive","received","receiving","receives"]},
+{en:"She told me about the new client.",ru:"Она рассказала мне о новом клиенте.",gap:"told",opts:["said","told","spoke","talked"]},
+{en:"She is good at creating content.",ru:"Она хорошо создаёт контент.",gap:"at",opts:["in","at","on","for"]},
+{en:"There are fewer people here than before.",ru:"Здесь меньше людей, чем раньше.",gap:"fewer",opts:["less","fewer","little","few"]},
+{en:"I am responsible for four accounts.",ru:"Я отвечаю за четыре аккаунта.",gap:"responsible",opts:["responsible","responsable","response","responding"]},
+{en:"I was bored during the long call.",ru:"Мне было скучно во время долгого звонка.",gap:"bored",opts:["boring","bored","bore","bores"]},
+{en:"She has just finished the design.",ru:"Она только что закончила дизайн.",gap:"finished",opts:["finish","finished","finishing","finishes"]},
+{en:"I agree with your approach.",ru:"Я согласна с твоим подходом.",gap:"agree",opts:["am agree","agree","agreed","agreeing"]},
+{en:"The brief was clear and straightforward.",ru:"Бриф был ясным и понятным.",gap:"straightforward",opts:["straightforward","straight","forward","straightaway"]},
+{en:"He explained the strategy to the client.",ru:"Он объяснил стратегию клиенту.",gap:"explained",opts:["said","told","explained","spoke"]},
+{en:"We need to optimize the campaign.",ru:"Нам нужно оптимизировать кампанию.",gap:"optimize",opts:["optimize","optimal","optimism","option"]},
+{en:"This decision could undermine trust.",ru:"Это решение может подорвать доверие.",gap:"undermine",opts:["undermine","underline","undermine","undergo"]},
+{en:"We should prioritize the main tasks.",ru:"Нам стоит расставить приоритеты в главных задачах.",gap:"prioritize",opts:["prioritize","priority","prior","prioritise"]},
+{en:"The results were truly outstanding.",ru:"Результаты были по-настоящему выдающимися.",gap:"outstanding",opts:["outstanding","standing","outstanded","understanding"]},
+{en:"Let me clarify the main goal.",ru:"Позволь мне прояснить главную цель.",gap:"clarify",opts:["clarify","clear","clarity","classify"]},
+{en:"We must comply with the new policy.",ru:"Мы должны соблюдать новую политику.",gap:"comply",opts:["comply","complete","complain","compile"]},
+{en:"The campaign gained real momentum.",ru:"Кампания набрала настоящий импульс.",gap:"momentum",opts:["momentum","moment","memento","monument"]},
+{en:"We need to allocate more budget.",ru:"Нам нужно выделить больше бюджета.",gap:"allocate",opts:["allocate","locate","allowance","relocate"]},
+{en:"Her insight changed the strategy.",ru:"Её проницательность изменила стратегию.",gap:"insight",opts:["insight","inside","incite","insist"]},
+{en:"This is a crucial step for growth.",ru:"Это ключевой шаг для роста.",gap:"crucial",opts:["crucial","cruel","crude","crucible"]},
+{en:"We want to retain our best clients.",ru:"Мы хотим удержать наших лучших клиентов.",gap:"retain",opts:["retain","remain","retrain","obtain"]},
+{en:"The new tool will streamline our work.",ru:"Новый инструмент оптимизирует нашу работу.",gap:"streamline",opts:["streamline","stream","mainline","streamlining"]},
+{en:"Their support helped us thrive.",ru:"Их поддержка помогла нам процветать.",gap:"thrive",opts:["thrive","thrife","throve","strive"]},
+{en:"We should leverage our strengths.",ru:"Нам стоит использовать наши сильные стороны.",gap:"leverage",opts:["leverage","level","lever","leverages"]},
+{en:"The plan is both bold and feasible.",ru:"План одновременно смелый и осуществимый.",gap:"feasible",opts:["feasible","feeble","fashionable","favorable"]},
+{en:"A consistent brand builds credibility.",ru:"Последовательный бренд формирует доверие.",gap:"credibility",opts:["credibility","credit","credible","creditor"]},
+{en:"We must mitigate the financial risk.",ru:"Мы должны снизить финансовый риск.",gap:"mitigate",opts:["mitigate","migrate","militate","mediate"]},
+{en:"Her ambitious goal inspired the team.",ru:"Её амбициозная цель вдохновила команду.",gap:"ambitious",opts:["ambitious","ambition","ambiguous","amphibious"]},
+{en:"This approach is very pragmatic.",ru:"Этот подход очень прагматичный.",gap:"pragmatic",opts:["pragmatic","practical","dramatic","problematic"]},
+{en:"The brand needs to differentiate itself.",ru:"Бренду нужно отличаться от других.",gap:"differentiate",opts:["differentiate","different","difference","defer"]},
+{en:"We aim to cultivate a loyal audience.",ru:"Мы стремимся взрастить лояльную аудиторию.",gap:"cultivate",opts:["cultivate","culture","calculate","captivate"]},
+{en:"His foresight saved the project.",ru:"Его предвидение спасло проект.",gap:"foresight",opts:["foresight","forecast","foreseen","insight"]},
+{en:"The data shows a clear correlation.",ru:"Данные показывают чёткую корреляцию.",gap:"correlation",opts:["correlation","correction","collaboration","corporation"]}
+];
+/* extra quiz items focused on grammar still relevant */
+var QUIZ_G=[
+{s:"She didn't ______ to work.",o:["went","going","goes","go"],a:3,h:"didn't + base form."},
+{s:"There are ______ people now.",o:["less","fewer","little","much"],a:1,h:"fewer + countable."},
+{s:"She ______ reading daily.",o:["enjoy","enjoying","enjoys","enjoyed"],a:2,h:"she = enjoys."},
+{s:"Look forward to ______ you.",o:["meet","met","meeting","to meet"],a:2,h:"to + V-ing."},
+{s:"When I ______ home, I'll call.",o:["will arrive","arrive","arrived","arriving"],a:1,h:"when + present simple."},
+{s:"The news ______ important.",o:["are","were","is","have"],a:2,h:"news is singular."},
+{s:"He insisted ______ paying.",o:["to","for","on","at"],a:2,h:"insist ON."},
+{s:"She ______ me the truth.",o:["said","told","spoke","talked"],a:1,h:"tell + person."},
+{s:"I am ______ in class.",o:["boring","bore","bored","boredom"],a:2,h:"-ed = feeling."},
+{s:"I've lived here ______ 2018.",o:["for","since","from","during"],a:1,h:"2018 = since."},
+{s:"He is good ______ writing.",o:["in","on","at","for"],a:2,h:"good AT."},
+{s:"If it ______ well, we scale.",o:["will perform","performs","performed","perform"],a:1,h:"if + present simple."}
+];
+/* ============ STATE ============ */
+var DB_KEY="englishDaily_v2";
+function loadDB(){try{var d=localStorage.getItem(DB_KEY);return d?JSON.parse(d):null;}catch(e){return null;}}
+function saveDB(){try{localStorage.setItem(DB_KEY,JSON.stringify(DB));}catch(e){}}
+var DB=loadDB()||{created:today(),theme:"light",sessions:{},days:[],counts:{},vcDone:{},clDone:{},weekly:{},bestStreak:0,reminderDismissed:""};
+function ensureDB(){DB.sessions=DB.sessions||{};DB.days=DB.days||[];DB.counts=DB.counts||{};DB.vcDone=DB.vcDone||{};DB.clDone=DB.clDone||{};DB.weekly=DB.weekly||{};if(!DB.created)DB.created=today();}
+function today(){return new Date().toISOString().split("T")[0];}
+function nowH(){return new Date().getHours();}
+function weekKey(d){var dt=d?new Date(d):new Date();var oj=new Date(dt.getFullYear(),0,1);var w=Math.ceil((((dt-oj)/86400000)+oj.getDay()+1)/7);return dt.getFullYear()+"-W"+w;}
+ensureDB();
+
+/* ============ UTILS ============ */
+function shuf(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+function say(t,rate){if(!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=rate||0.85;speechSynthesis.speak(u);}
+function toast(m){var t=document.getElementById("toast");t.textContent=m;t.classList.add("vis");clearTimeout(window._tt);window._tt=setTimeout(function(){t.classList.remove("vis");},2300);}
+function bump(type,n){DB.counts[type]=(DB.counts[type]||0)+(n||1);saveDB();}
+
+/* ============ THEME ============ */
+function applyTheme(){document.documentElement.setAttribute("data-theme",DB.theme);document.getElementById("themeBtn").textContent=DB.theme==="dark"?"☀️":"🌙";var mc=document.querySelector('meta[name=theme-color]');if(mc)mc.setAttribute("content",DB.theme==="dark"?"#0f1115":"#ffffff");}
+function toggleTheme(){DB.theme=DB.theme==="dark"?"light":"dark";saveDB();applyTheme();}
+
+/* ============ NAV ============ */
+function go(id){document.querySelectorAll(".scr").forEach(function(s){s.classList.remove("vis");});document.querySelectorAll(".nb").forEach(function(b){b.classList.remove("on");});document.getElementById("scr-"+id).classList.add("vis");document.getElementById("nb-"+id).classList.add("on");window.scrollTo(0,0);if(id==="home")renderHome();if(id==="learn"){buildTenses();buildRules();buildVocabBrowse();}if(id==="stats")renderStats();if(id==="practice")setPractice(curPractice);}
+function openMenu(){document.getElementById("menuModal").classList.add("vis");}
+function closeMenu(){document.getElementById("menuModal").classList.remove("vis");}
+
+/* ============ STREAK ============ */
+function calcStreak(){if(!DB.days.length)return 0;var s=0,c=new Date();for(var i=0;i<400;i++){var d=c.toISOString().split("T")[0];if(DB.days.indexOf(d)>=0)s++;else if(i>0)break;c.setDate(c.getDate()-1);}return s;}
+function markPracticed(){var t=today();if(DB.days.indexOf(t)<0)DB.days.push(t);var st=calcStreak();if(st>(DB.bestStreak||0))DB.bestStreak=st;saveDB();}
+function markTodayManual(){markPracticed();renderStats();toast("Marked today ✓");}
+
+/* ============ DAY/SESSION MODEL ============
+Each day has 2 sessions: morning (new material) + evening (review).
+sessions[dayN] = {m:{done:false,stages:[]}, e:{done:false,stages:[]}}
+Morning unlocks evening. Completing both completes the day, unlocks next day's morning.
+============ */
+function getDay(n){var k="d"+n;if(!DB.sessions[k])DB.sessions[k]={m:{done:false},e:{done:false},date:null};return DB.sessions[k];}
+function activeDay(){for(var i=1;i<=30;i++){var d=getDay(i);if(!d.m.done||!d.e.done)return i;}return 30;}
+function dayWords(n){return VOCAB.filter(function(v){return v.day===n;});}
+function reviewWords(n){
+// evening reviews: today's 10 + yesterday's 10 (if exists)
+var w=dayWords(n).slice();
+if(n>1)w=w.concat(dayWords(n-1).slice(0,5));
+return w;
+}
+
+/* Morning session stages */
+function morningStages(day){
+return [
+{type:"memorize",words:dayWords(day),label:"Memorize 10 new words"},
+{type:"match",words:dayWords(day),label:"Match words to meaning"},
+{type:"cards",words:dayWords(day),label:"Flashcard drill"},
+{type:"gap",n:5,label:"Fill the gap"},
+{type:"speak",rules:rulesForDay(day),n:4,label:"Say it out loud"}
+];
+}
+/* Evening session stages */
+function eveningStages(day){
+return [
+{type:"cards",words:reviewWords(day),label:"Review today + yesterday"},
+{type:"order",n:4,label:"Build the sentence"},
+{type:"translate",n:4,label:"Translate to English"},
+{type:"dict",n:4,label:"Dictation"},
+{type:"quiz",n:6,label:"Mixed quiz"}
+];
+}
+function rulesForDay(day){
+// cycle rules across days so all get covered
+var pairs=[[1,2],[3,4],[5,6],[7,8],[9,10],[1,3],[2,4],[5,7],[6,8],[9,1]];
+return pairs[(day-1)%pairs.length];
+}
+
+/* ============ HOME ============ */
+function greeting(){var h=nowH();if(h<12)return "Good morning 🌅";if(h<18)return "Good afternoon ☀️";return "Good evening 🌙";}
+function renderHome(){
+ensureDB();
+var day=activeDay();var d=getDay(day);
+document.getElementById("heroDay").textContent="Day "+day;
+document.getElementById("heroGreet").textContent=greeting();
+document.getElementById("heroStreak").textContent=calcStreak();
+var sessDone=(d.m.done?1:0)+(d.e.done?1:0);
+document.getElementById("heroFill").style.width=(sessDone/2*100)+"%";
+document.getElementById("heroProgTxt").textContent=d.m.done&&d.e.done?"Day complete! 🎉":d.m.done?"Evening review is ready 🌙":"Start your morning session 🌅";
+// sessions
+var sl=document.getElementById("sessionList");sl.innerHTML="";
+var h=nowH();
+// morning card
+var mLocked=false;
+sl.appendChild(sessionCard("morning",day,"m",d.m.done,mLocked,"🌅","Morning — New Material","10 new words + memorize + practice"));
+// evening card - unlocked only after morning done
+var eLocked=!d.m.done;
+sl.appendChild(sessionCard("evening",day,"e",d.e.done,eLocked,"🌙","Evening — Review & Lock In","Repeat today + yesterday's words"));
+// reminder banner
+renderReminder(day,d);
+// course progress
+var completed=0,wordsLearned=Object.keys(DB.vcDone).length;
+for(var i=1;i<=30;i++){var dd=getDay(i);if(dd.m.done&&dd.e.done)completed++;}
+document.getElementById("coursePct").textContent=Math.round(completed/30*100)+"%";
+document.getElementById("courseFill").style.width=(completed/30*100)+"%";
+document.getElementById("courseTxt").textContent="Day "+day+" of 30 • "+wordsLearned+" words learned";
+}
+function sessionCard(cls,day,slot,done,locked,icon,title,sub){
+var div=document.createElement("div");
+div.className="session-card "+cls+(locked?" locked":"")+(done?" done":"");
+var stages=slot==="m"?morningStages(day):eveningStages(day);
+var status=done?'<div class="sc-check">✓</div>':locked?'<div class="sc-status">🔒 after morning</div>':'<div class="sc-status">'+stages.length+" stages</div>";
+div.innerHTML=status+'<div class="sc-icon">'+icon+'</div><div class="sc-title">'+title+'</div><div class="sc-sub">'+sub+'</div><div class="sc-meta"><span>📚 '+stages.length+' stages</span><span>⏱ ~'+(slot==="m"?"12":"10")+' min</span></div><div class="sc-prog"><div class="sc-prog-f" style="width:'+(done?100:0)+'%"></div></div>';
+if(!locked&&!done){div.onclick=function(){startSession(day,slot);};}
+else if(done){div.onclick=function(){startSession(day,slot);};}
+return div;
+}
+function renderReminder(day,d){
+var box=document.getElementById("reminderBox");box.innerHTML="";
+var h=nowH();var t=today();
+if(DB.reminderDismissed===t)return;
+var msg=null;
+if(!d.m.done&&h<12)msg="🌅 Good morning! Time for your new words. 10 minutes now sets up your whole day.";
+else if(d.m.done&&!d.e.done&&h>=17)msg="🌙 Evening review time! Repeat today's words now so they stick overnight.";
+else if(!d.m.done&&h>=12&&h<17)msg="☀️ You haven't done your morning session yet. Jump in whenever you're ready!";
+else if(d.m.done&&!d.e.done&&h<17)msg="✨ Morning done! Your evening review unlocks the full day — do it after 5pm or whenever suits you.";
+if(msg){box.innerHTML='<div class="reminder"><span class="rem-ic">🔔</span><div class="rem-txt">'+msg+'</div><button class="rem-close" onclick="dismissReminder()">✕</button></div>';}
+}
+function dismissReminder(){DB.reminderDismissed=today();saveDB();document.getElementById("reminderBox").innerHTML="";}
+/* ============ SESSION RUNNER ============ */
+var SES=null; // {day, slot, stages, idx}
+function startSession(day,slot){
+var stages=slot==="m"?morningStages(day):eveningStages(day);
+SES={day:day,slot:slot,stages:stages,idx:0};
+go("practice");
+document.getElementById("practiceSeg").style.display="none";
+document.getElementById("practiceSeg2").style.display="none";
+document.getElementById("practiceTopics").style.display="none";
+document.querySelector("#scr-practice .h1").textContent=(slot==="m"?"🌅 Morning":"🌙 Evening")+" — Day "+day;
+document.querySelector("#scr-practice .sub").style.display="none";
+runStage();
+}
+function runStage(){
+if(SES.idx>=SES.stages.length){endSession();return;}
+var st=SES.stages[SES.idx];
+var mount=document.getElementById("gameMount");
+// stage progress bar
+var bar='<div class="stage-bar">'+SES.stages.map(function(_,i){return'<div class="stage-seg '+(i<SES.idx?"done":i===SES.idx?"cur":"")+'"></div>';}).join("")+'</div><div class="stage-label">Stage '+(SES.idx+1)+" of "+SES.stages.length+" — "+st.label+'</div>';
+mount.innerHTML=bar+'<div id="stageMount"></div>';
+var sm=document.getElementById("stageMount");
+if(st.type==="memorize")runMemorize(st,sm);
+else if(st.type==="match")runMatch(st,sm);
+else if(st.type==="cards")runCards(st,sm);
+else if(st.type==="gap")runGap(st,sm);
+else if(st.type==="order")runOrder(st,sm);
+else if(st.type==="translate")runTranslate(st,sm);
+else if(st.type==="speak")runSpeak(st,sm);
+else if(st.type==="dict")runDict(st,sm);
+else if(st.type==="quiz")runQuiz(st,sm);
+}
+function nextStage(){SES.idx++;markPracticed();runStage();}
+function endSession(){
+var d=getDay(SES.day);d[SES.slot].done=true;
+markPracticed();
+if(SES.slot==="m"){toast("🌅 Morning complete! Evening review unlocked.");}
+else{
+// evening done — check full day
+if(d.m.done&&d.e.done){d.date=today();
+// mark words learned
+dayWords(SES.day).forEach(function(w){DB.vcDone[w.w]=true;});
+toast("🎉 Day "+SES.day+" complete! Next day unlocked.");}
+}
+// weekly snapshot
+var wk=weekKey();DB.weekly[wk]=DB.weekly[wk]||{days:0};
+saveDB();
+var slot=SES.slot,day=SES.day;
+SES=null;
+// restore practice UI
+document.getElementById("practiceSeg").style.display="";
+document.getElementById("practiceSeg2").style.display="";
+document.getElementById("practiceTopics").style.display="";
+document.querySelector("#scr-practice .sub").style.display="";
+document.querySelector("#scr-practice .h1").textContent="🎮 Free Practice";
+go("home");
+}
+
+/* ============ STAGE: MEMORIZE ============ */
+var memI=0,memWords=[];
+function runMemorize(st,mount){
+memWords=st.words;memI=0;
+mount.innerHTML='<div id="memBox"></div>';
+memShow();
+}
+function memShow(){
+var w=memWords[memI];
+var dots=memWords.map(function(_,i){return'<div class="mem-dot '+(i<memI?"seen":i===memI?"cur":"")+'"></div>';}).join("");
+var box=document.getElementById("memBox");
+box.innerHTML='<div class="mem-dots">'+dots+'</div><div class="mem-card"><div class="mem-counter">New word '+(memI+1)+' of '+memWords.length+'</div><div class="mem-word">'+w.w+'</div><div class="mem-tr">'+w.r+'</div><div class="mem-mean">'+w.m+'</div><div class="mem-ex">'+w.e+'</div><button class="mem-snd" onclick="say(\''+w.w.replace(/'/g,"\\'")+'\')">🔊</button></div><div class="mem-nav">'+(memI>0?'<button class="btn ghost" onclick="memPrev()">← Back</button>':'')+'<button class="btn primary" onclick="memNext()">'+(memI<memWords.length-1?"Next word →":"✓ I've seen them all")+'</button></div>';
+say(w.w);
+}
+function memNext(){if(memI<memWords.length-1){memI++;memShow();}else{nextStage();}}
+function memPrev(){if(memI>0){memI--;memShow();}}
+
+/* ============ STAGE: MATCH ============ */
+var matchSel=null,matchDone=0,matchPairs=[];
+function runMatch(st,mount){
+matchPairs=shuf(st.words).slice(0,Math.min(6,st.words.length));matchDone=0;matchSel=null;
+var left=shuf(matchPairs.map(function(w){return{id:w.w,txt:w.w};}));
+var right=shuf(matchPairs.map(function(w){return{id:w.w,txt:w.r};}));
+mount.innerHTML='<div class="sub" style="text-align:center;margin-bottom:12px">Tap a word, then its translation</div><div class="match-grid"><div class="match-col" id="matchL"></div><div class="match-col" id="matchR"></div></div><div id="matchMsg"></div>';
+var L=document.getElementById("matchL"),R=document.getElementById("matchR");
+left.forEach(function(o){var b=document.createElement("div");b.className="match-item";b.dataset.id=o.id;b.dataset.side="L";b.textContent=o.txt;b.onclick=function(){matchTap(b);};L.appendChild(b);});
+right.forEach(function(o){var b=document.createElement("div");b.className="match-item";b.dataset.id=o.id;b.dataset.side="R";b.textContent=o.txt;b.onclick=function(){matchTap(b);};R.appendChild(b);});
+}
+function matchTap(el){
+if(el.classList.contains("matched"))return;
+if(!matchSel){matchSel=el;el.classList.add("sel");if(el.dataset.side==="L")say(el.dataset.id);return;}
+if(matchSel===el){el.classList.remove("sel");matchSel=null;return;}
+if(matchSel.dataset.side===el.dataset.side){matchSel.classList.remove("sel");matchSel=el;el.classList.add("sel");return;}
+// check match
+if(matchSel.dataset.id===el.dataset.id){
+matchSel.classList.remove("sel");matchSel.classList.add("matched");el.classList.add("matched");matchSel=null;matchDone++;bump("good");
+if(matchDone===matchPairs.length){document.getElementById("matchMsg").innerHTML='<div class="msg ok vis">✓ All matched! Great work.</div>';setTimeout(nextStage,900);}
+}else{
+var a=matchSel,b=el;a.classList.add("wrong");b.classList.add("wrong");bump("bad");
+setTimeout(function(){a.classList.remove("wrong","sel");b.classList.remove("wrong");},450);matchSel=null;
+}
+}
+/* ============ STAGE: CARDS ============ */
+var fcW=[],fcI=0,fcFlip2=false,fcG=0,fcB=0;
+function runCards(st,mount){
+fcW=shuf(st.words);fcI=0;fcG=0;fcB=0;
+mount.innerHTML='<div class="scrow"><div><b id="fcCur">1</b>/<span id="fcTot">0</span></div><div>✅<b id="fcGood">0</b> ⭕<b id="fcBad">0</b></div></div><div class="prog" style="margin-bottom:14px"><div class="prog-f g" id="fcPB" style="width:0%"></div></div><div class="fc-scene"><div class="fc-card" id="fcCard" onclick="fcFlipCard()"><div class="fc-face fc-front"><div class="fc-lbl">English</div><div class="fc-word" id="fcWord">—</div><div class="fc-m" id="fcMean"></div><button class="fc-snd" onclick="event.stopPropagation();fcSayWord()">🔊</button><div class="fc-hint">TAP TO FLIP</div></div><div class="fc-face fc-back"><div class="fc-lbl" style="color:var(--grn)">Перевод</div><div class="fc-bw" id="fcBw">—</div><div class="fc-be" id="fcBe"></div><button class="fc-snd" style="border-color:var(--grn-brd);color:var(--grn)" onclick="event.stopPropagation();fcSayWord()">🔊</button></div></div></div><div class="fc-rate"><button class="fc-rbtn" onclick="fcRateCard(0)"><span style="font-size:19px">❌</span>Again</button><button class="fc-rbtn" onclick="fcRateCard(1)"><span style="font-size:19px">👍</span>Good</button><button class="fc-rbtn" onclick="fcRateCard(2)"><span style="font-size:19px">⭐</span>Easy</button></div>';
+fcShowCard();
+}
+function fcShowCard(){if(fcI>=fcW.length){nextStage();return;}var w=fcW[fcI];document.getElementById("fcWord").textContent=w.w;document.getElementById("fcMean").textContent=w.m;document.getElementById("fcBw").textContent=w.r;document.getElementById("fcBe").innerHTML=w.e;document.getElementById("fcCur").textContent=fcI+1;document.getElementById("fcTot").textContent=fcW.length;document.getElementById("fcGood").textContent=fcG;document.getElementById("fcBad").textContent=fcB;fcFlip2=false;var c=document.getElementById("fcCard");c.classList.remove("flip","sl","sr","ent");void c.offsetWidth;c.classList.add("ent");document.getElementById("fcPB").style.width=(fcI/fcW.length*100)+"%";}
+function fcFlipCard(){fcFlip2=!fcFlip2;document.getElementById("fcCard").classList.toggle("flip",fcFlip2);}
+function fcSayWord(){if(fcW[fcI])say(fcW[fcI].w);}
+function fcRateCard(lv){var w=fcW[fcI];if(lv>=1){fcG++;bump("good");if(lv===2)DB.vcDone[w.w]=true;}else{fcB++;bump("bad");}saveDB();var c=document.getElementById("fcCard");c.classList.add(lv===0?"sl":"sr");setTimeout(function(){c.classList.remove("sl","sr","flip");fcI++;fcShowCard();},250);}
+
+/* ============ STAGE: GAP ============ */
+var gapQs=[],gapI=0;
+function runGap(st,mount){gapQs=shuf(SENTENCES).slice(0,st.n);gapI=0;mount.innerHTML='<div class="scrow"><span id="gapCnt">1/'+st.n+'</span></div><div id="gapMount"></div>';gapShow();}
+function gapShow(){if(gapI>=gapQs.length){nextStage();return;}var q=gapQs[gapI];document.getElementById("gapCnt").textContent=(gapI+1)+"/"+gapQs.length;var sentence=q.en.replace(q.gap,'<span class="gap-blank">?</span>');var opts=shuf(q.opts.slice());var html='<div class="gap-sentence">'+sentence+'</div><div class="gap-opts">'+opts.map(function(o){return'<button class="gap-opt" onclick="gapAns(this,\''+o.replace(/'/g,"\\'")+'\',\''+q.gap.replace(/'/g,"\\'")+'\')">'+o+'</button>';}).join("")+'</div><div class="msg" id="gapMsg"></div><button class="nxt" id="gapNxt" onclick="gapNext()">Next →</button>';document.getElementById("gapMount").innerHTML=html;}
+function gapAns(btn,chosen,correct){var ok=chosen===correct;document.querySelectorAll(".gap-opt").forEach(function(b){b.style.pointerEvents="none";if(b.textContent===correct)b.classList.add("cor");else if(b===btn&&!ok)b.classList.add("wrg");});var m=document.getElementById("gapMsg");if(ok){m.className="msg ok vis";m.textContent="✓ Correct!";bump("good");say(gapQs[gapI].en);}else{m.className="msg no vis";m.textContent="✗ Correct: "+correct;bump("bad");}document.getElementById("gapNxt").classList.add("vis");}
+function gapNext(){gapI++;gapShow();}
+
+/* ============ STAGE: ORDER ============ */
+var ordQs=[],ordI=0,ordSel=[];
+function runOrder(st,mount){ordQs=shuf(SENTENCES).slice(0,st.n);ordI=0;mount.innerHTML='<div class="scrow"><span id="ordCnt">1/'+st.n+'</span></div><div id="ordMount"></div>';ordShow();}
+function ordShow(){if(ordI>=ordQs.length){nextStage();return;}var q=ordQs[ordI];ordSel=[];document.getElementById("ordCnt").textContent=(ordI+1)+"/"+ordQs.length;var words=shuf(q.en.replace(/[.?]/g,"").split(" "));var html='<div class="sub" style="text-align:center;margin-bottom:10px">🇷🇺 '+q.ru+'</div><div class="wo-target" id="ordTarget"><span style="font-size:12px;color:var(--ink3)">Tap words in order ↓</span></div><div class="wo-pool" id="ordPool"></div><div class="msg" id="ordMsg"></div><button class="btn acc" id="ordCheck" onclick="ordCheckFn()">Check ✓</button><button class="nxt" id="ordNxt" onclick="ordNext()">Next →</button>';document.getElementById("ordMount").innerHTML=html;var pool=document.getElementById("ordPool");words.forEach(function(w,i){var b=document.createElement("button");b.className="wo-chip";b.textContent=w;b.dataset.i=i;b.onclick=function(){ordTap(b,w);};pool.appendChild(b);});}
+function ordTap(btn,word){if(btn.classList.contains("used"))return;btn.classList.add("used");ordSel.push({w:word,el:btn});var tgt=document.getElementById("ordTarget");tgt.classList.add("has");tgt.innerHTML="";ordSel.forEach(function(s,idx){var c=document.createElement("button");c.className="wo-chip in";c.textContent=s.w;c.onclick=function(){ordRemove(idx);};tgt.appendChild(c);});}
+function ordRemove(idx){var s=ordSel[idx];s.el.classList.remove("used");ordSel.splice(idx,1);var tgt=document.getElementById("ordTarget");if(!ordSel.length){tgt.classList.remove("has");tgt.innerHTML='<span style="font-size:12px;color:var(--ink3)">Tap words in order ↓</span>';return;}tgt.innerHTML="";ordSel.forEach(function(s,i){var c=document.createElement("button");c.className="wo-chip in";c.textContent=s.w;c.onclick=function(){ordRemove(i);};tgt.appendChild(c);});}
+function ordCheckFn(){var q=ordQs[ordI];var ans=ordSel.map(function(s){return s.w;}).join(" ");var correct=q.en.replace(/[.?]/g,"");var ok=ans.toLowerCase()===correct.toLowerCase();var tgt=document.getElementById("ordTarget");tgt.classList.add(ok?"cor":"wrg");var m=document.getElementById("ordMsg");if(ok){m.className="msg ok vis";m.textContent="✓ Perfect!";bump("good");say(q.en);}else{m.className="msg no vis";m.textContent="✗ Correct: "+q.en;bump("bad");}document.getElementById("ordCheck").style.display="none";document.getElementById("ordNxt").classList.add("vis");}
+function ordNext(){ordI++;ordShow();}
+
+/* ============ STAGE: TRANSLATE ============ */
+var trQs=[],trI=0;
+function runTranslate(st,mount){trQs=shuf(SENTENCES).slice(0,st.n);trI=0;mount.innerHTML='<div class="scrow"><span id="trCnt">1/'+st.n+'</span></div><div id="trMount"></div>';trShow();}
+function trShow(){if(trI>=trQs.length){nextStage();return;}var q=trQs[trI];document.getElementById("trCnt").textContent=(trI+1)+"/"+trQs.length;document.getElementById("trMount").innerHTML='<div class="tr-ru">🇷🇺 '+q.ru+'</div><div class="tr-hint-txt">Write it in English</div><textarea class="ta" id="trInput" rows="2" placeholder="Type in English..."></textarea><div class="msg" id="trMsg"></div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn ghost" onclick="trHint()">💡 Hint</button><button class="btn acc" id="trCheck" onclick="trCheckFn()">Check ✓</button></div><button class="nxt" id="trNxt" onclick="trNext()">Next →</button>';}
+function trHint(){var q=trQs[trI];var words=q.en.split(" ");document.getElementById("trMsg").className="msg yel vis";document.getElementById("trMsg").textContent="Starts with: "+words.slice(0,2).join(" ")+"...";}
+function trCheckFn(){var q=trQs[trI];var norm=function(s){return s.toLowerCase().replace(/[.,!?]/g,"").replace(/\s+/g," ").trim();};var ans=document.getElementById("trInput").value;var ok=norm(ans)===norm(q.en);var m=document.getElementById("trMsg");if(ok){m.className="msg ok vis";m.textContent="✓ Perfect!";bump("good");say(q.en);}else{m.className="msg no vis";m.innerHTML="Correct: <b>"+q.en+"</b><br><span style='font-size:11px'>Yours: "+(ans||"(empty)")+"</span>";bump("bad");}document.getElementById("trCheck").style.display="none";document.getElementById("trNxt").classList.add("vis");}
+function trNext(){trI++;trShow();}
+
+/* ============ STAGE: SPEAK ============ */
+var spP=[],spI=0;
+function runSpeak(st,mount){var arr=[];(st.rules||[1,2]).forEach(function(rid){var r=RULES[rid-1];if(r)r.speak.forEach(function(s){arr.push({phrase:s,rule:r.name});});});spP=shuf(arr).slice(0,st.n);spI=0;mount.innerHTML='<div class="scrow"><span id="spCnt">1/'+st.n+'</span></div><div id="spMount"></div>';spShow();}
+function spShow(){if(spI>=spP.length){nextStage();return;}var q=spP[spI];document.getElementById("spCnt").textContent=(spI+1)+"/"+spP.length;document.getElementById("spMount").innerHTML='<div style="font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:9px;font-weight:700;text-align:center">'+q.rule+'</div><div class="speak-phrase">'+q.phrase+'</div><button class="speak-btn" id="spBtn" onclick="spPlayFn()">🔊</button><div style="text-align:center;font-size:11px;color:var(--ink3);font-weight:600;margin-bottom:14px">Tap 🔊 • Then say it out loud</div><div style="font-size:11.5px;color:var(--ink3);text-align:center;margin-bottom:9px;font-weight:600">How did you do?</div><div class="speak-rate"><button class="speak-rbtn" onclick="spRateFn(0)" style="border-color:var(--red-brd);color:var(--red)"><span style="font-size:21px">😰</span>Couldn\'t</button><button class="speak-rbtn" onclick="spRateFn(1)" style="border-color:var(--gold-brd);color:var(--gold)"><span style="font-size:21px">😅</span>Almost</button><button class="speak-rbtn" onclick="spRateFn(2)" style="border-color:var(--grn-brd);color:var(--grn)"><span style="font-size:21px">😎</span>Nailed it</button></div>';setTimeout(spPlayFn,300);}
+function spPlayFn(){say(spP[spI].phrase,0.78);var b=document.getElementById("spBtn");if(b){b.classList.add("active");bump("speak");setTimeout(function(){b.classList.remove("active");},2000);}}
+function spRateFn(lv){if(lv>=1)bump("good");else bump("bad");spI++;spShow();}
+
+/* ============ STAGE: DICTATION ============ */
+var dtQ=[],dtI=0,dtHc=0;
+function runDict(st,mount){dtQ=shuf(SENTENCES).slice(0,st.n);dtI=0;mount.innerHTML='<div class="scrow"><span id="dtCnt">1/'+st.n+'</span></div><div id="dtMount"></div>';dtShow();}
+function dtShow(){if(dtI>=dtQ.length){nextStage();return;}dtHc=0;var q=dtQ[dtI];document.getElementById("dtCnt").textContent=(dtI+1)+"/"+dtQ.length;document.getElementById("dtMount").innerHTML='<div style="text-align:center;margin-bottom:6px"><button class="dict-play" id="dtBtn" onclick="dtPlayFn()">🔊</button></div><div style="text-align:center;font-size:10.5px;color:var(--ink3);font-weight:600;margin-bottom:13px" id="dtHintTxt">Tap 🔊 to hear • Tap again to replay</div><textarea class="ta" id="dtInput" rows="2" placeholder="Write what you hear..."></textarea><div class="msg" id="dtMsg"></div><div class="word-reveal" id="dtReveal" style="display:none"></div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn ghost" id="dtHintBtn" onclick="dtHintFn()">💡 Slow</button><button class="btn acc" id="dtCheck" onclick="dtCheckFn()">Check ✓</button></div><button class="nxt" id="dtNxt" onclick="dtNextFn()">Next →</button>';setTimeout(dtPlayFn,300);}
+function dtPlayFn(){var q=dtQ[dtI];var b=document.getElementById("dtBtn");b.classList.add("playing");say(q.en,dtHc>0?0.6:0.85);bump("listen");setTimeout(function(){b.classList.remove("playing");},2200);}
+function dtHintFn(){dtHc++;say(dtQ[dtI].en,0.6);document.getElementById("dtHintTxt").textContent="Playing slowly...";}
+function dtCheckFn(){var q=dtQ[dtI];var norm=function(s){return s.toLowerCase().replace(/[.,!?]/g,"").replace(/\s+/g," ").trim();};var ans=document.getElementById("dtInput").value;var ok=norm(ans)===norm(q.en);document.getElementById("dtInput").style.borderColor=ok?"var(--grn)":"var(--red)";var m=document.getElementById("dtMsg");if(ok){m.className="msg ok vis";m.textContent="✓ Perfect listening!";bump("good");}else{m.className="msg no vis";m.textContent="✗ Correct below:";bump("bad");var rv=document.getElementById("dtReveal");rv.style.display="flex";var aw=ans.split(/\s+/);rv.innerHTML=q.en.split(" ").map(function(w,i){var miss=norm(aw[i]||"")!==norm(w);return'<span class="wr-word'+(miss?" miss":"")+'">'+w+'</span>';}).join("");}document.getElementById("dtCheck").style.display="none";document.getElementById("dtHintBtn").style.display="none";document.getElementById("dtNxt").classList.add("vis");}
+function dtNextFn(){dtI++;dtShow();}
+
+/* ============ STAGE: QUIZ ============ */
+var qzQ=[],qzI=0,qzC=0,qzW=0;
+function runQuiz(st,mount){qzQ=shuf(QUIZ_G).slice(0,st.n);qzI=0;qzC=0;qzW=0;mount.innerHTML='<div class="scrow"><span>Score: <b id="qzSc">0</b></span><span id="qzCnt">1/'+st.n+'</span></div><div class="prog" style="margin-bottom:12px"><div class="prog-f" id="qzProg" style="width:0%"></div></div><div id="qzMount"></div>';qzShow();}
+function qzShow(){if(qzI>=qzQ.length){nextStage();return;}var q=qzQ[qzI];document.getElementById("qzProg").style.width=(qzI/qzQ.length*100)+"%";document.getElementById("qzCnt").textContent=(qzI+1)+"/"+qzQ.length;document.getElementById("qzSc").textContent=qzC;var pts=q.s.split("______");var html='<div class="card flat"><div style="font-size:15px;line-height:1.7;margin-bottom:13px;padding:12px 14px;background:var(--s2);border-radius:12px">'+pts[0]+'<span style="color:var(--acc);font-weight:700;border-bottom:2px solid var(--acc);padding:0 4px">___</span>'+(pts[1]||"")+'</div><div class="opts" id="qzOpts"></div><div class="exp" id="qzExp"></div></div><button class="nxt" id="qzNxt" onclick="qzNextFn()">Next →</button>';document.getElementById("qzMount").innerHTML=html;var oEl=document.getElementById("qzOpts");shuf(q.o.map(function(o,i){return{t:o,c:i===q.a};})).forEach(function(o,i){var b=document.createElement("button");b.className="opt";b.innerHTML='<span class="lt">'+["A","B","C","D"][i]+'</span><span>'+o.t+'</span>';b.onclick=function(){qzAns(o.c,o.t,q);};oEl.appendChild(b);});}
+function qzAns(ok,chosen,q){document.querySelectorAll("#qzOpts .opt").forEach(function(b){b.style.pointerEvents="none";});if(ok){qzC++;bump("good");var e=document.getElementById("qzExp");e.className="exp vis ce";e.textContent="✓ "+q.h;say(chosen);}else{qzW++;bump("bad");var cor=q.o[q.a];document.querySelectorAll("#qzOpts .opt").forEach(function(b){var t=b.querySelector("span:last-child").textContent;if(t===cor)b.classList.add("cor");else if(t===chosen)b.classList.add("wrg");});var e2=document.getElementById("qzExp");e2.className="exp vis we";e2.textContent="✗ "+cor+". "+q.h;}document.getElementById("qzSc").textContent=qzC;document.getElementById("qzNxt").classList.add("vis");}
+function qzNextFn(){qzI++;qzShow();}
+/* ============ FREE PRACTICE ============ */
+var curPractice="cards",practiceTopic="all";
+function setPractice(id){curPractice=id;document.querySelectorAll("#scr-practice .seg-btn").forEach(function(b){b.classList.remove("on");});
+var allBtns=document.querySelectorAll("#scr-practice .seg-btn");var names=["cards","match","gap","order","translate","quiz","speak","dict"];allBtns.forEach(function(b){if(b.getAttribute("onclick").indexOf("'"+id+"'")>=0)b.classList.add("on");});
+// topic pills only relevant for word games
+var tp=document.getElementById("practiceTopics");
+if(["cards","match"].indexOf(id)>=0){tp.style.display="flex";buildPracticeTopics();}else{tp.style.display="none";}
+var mount=document.getElementById("gameMount");
+SES=null;
+if(id==="cards"){var w=practiceTopic==="all"?VOCAB.slice():VOCAB.filter(function(v){return Math.ceil(v.day/6)===parseInt(practiceTopic);});runCardsFree(shuf(w).slice(0,20));}
+else if(id==="match"){var w2=practiceTopic==="all"?VOCAB.slice():VOCAB.filter(function(v){return Math.ceil(v.day/6)===parseInt(practiceTopic);});runMatchFree(shuf(w2).slice(0,6));}
+else if(id==="gap")runGapFree();
+else if(id==="order")runOrderFree();
+else if(id==="translate")runTranslateFree();
+else if(id==="quiz")runQuizFree();
+else if(id==="speak")runSpeakFree();
+else if(id==="dict")runDictFree();
+}
+function buildPracticeTopics(){var el=document.getElementById("practiceTopics");el.innerHTML="";[{k:"all",l:"All 300"},{k:"1",l:"Days 1-6"},{k:"2",l:"Days 7-12"},{k:"3",l:"Days 13-18"},{k:"4",l:"Days 19-24"},{k:"5",l:"Days 25-30"}].forEach(function(t){var b=document.createElement("button");b.className="pill"+(practiceTopic===t.k?" on":"");b.textContent=t.l;b.onclick=function(){practiceTopic=t.k;setPractice(curPractice);};el.appendChild(b);});}
+/* Free wrappers reuse stage fns but loop forever with restart */
+function freeWrap(runFn){return function(){runFn();};}
+function runCardsFree(words){fcW=words;fcI=0;fcG=0;fcB=0;var mount=document.getElementById("gameMount");runCards({words:words},mount);var orig=nextStage;}
+// Override nextStage behavior in free mode: detect SES null
+var _nextStage=nextStage;
+nextStage=function(){if(SES){_nextStage();}else{toast("Round complete! 🎉");go("practice");setTimeout(function(){setPractice(curPractice);},400);}};
+function runMatchFree(words){var mount=document.getElementById("gameMount");runMatch({words:words},mount);}
+function runGapFree(){var mount=document.getElementById("gameMount");runGap({n:8},mount);}
+function runOrderFree(){var mount=document.getElementById("gameMount");runOrder({n:6},mount);}
+function runTranslateFree(){var mount=document.getElementById("gameMount");runTranslate({n:6},mount);}
+function runQuizFree(){var mount=document.getElementById("gameMount");runQuiz({n:10},mount);}
+function runSpeakFree(){var mount=document.getElementById("gameMount");runSpeak({rules:[1,2,3,4,5,6,7,8,9,10],n:8},mount);}
+function runDictFree(){var mount=document.getElementById("gameMount");runDict({n:8},mount);}
+
+/* ============ TENSES ============ */
+function buildTenses(){
+var el=document.getElementById("tenseList");el.innerHTML="";
+TENSES.forEach(function(t,i){
+var sig=t.signals.map(function(s){return'<span class="pill" style="cursor:default">'+s+'</span>';}).join("");
+var ex=t.ex.map(function(e){return'<div style="padding:9px 0;border-top:1px solid var(--brd);cursor:pointer" onclick="say(\''+e.en.replace(/'/g,"\\'")+'\')"><div style="font-size:13px;font-weight:600">🔊 '+e.en+'</div><div style="font-size:11.5px;color:var(--ink3);margin-top:2px">'+e.ru+'</div></div>';}).join("");
+el.innerHTML+='<div class="rule-card"><div class="rule-head" onclick="toggleTense('+i+')"><div style="display:flex;align-items:center;gap:11px"><div class="rule-num" style="background:var(--'+t.color+')">'+(i+1)+'</div><div><div class="rule-name">'+t.name+'</div><div style="font-size:9.5px;color:var(--ink3);font-weight:700;letter-spacing:.5px;text-transform:uppercase">'+t.use+' · '+t.ru+'</div></div></div><span id="ta'+i+'">▼</span></div><div class="rule-body" id="tb'+i+'"><div class="rule-tip"><b>Form:</b> '+t.form+'</div><div style="font-size:12.5px;color:var(--ink2);margin-bottom:11px;font-family:\'JetBrains Mono\',monospace">'+t.forms.join(' · ')+'</div><div class="pills">'+sig+'</div>'+ex+'</div></div>';
+});
+buildTenseGuide();buildTenseMistakes();
+}
+function toggleTense(n){var b=document.getElementById("tb"+n),a=document.getElementById("ta"+n);var open=b.classList.contains("open");b.classList.toggle("open",!open);a.textContent=open?"▼":"▲";}
+function buildTenseGuide(){var el=document.getElementById("tenseGuide");el.innerHTML=TENSE_GUIDE.map(function(g){return'<div class="cmp-row" style="align-items:flex-start"><div style="flex:1"><div class="cmp-label">'+g.q+'</div><div style="font-size:10.5px;color:var(--ink3);font-family:\'JetBrains Mono\',monospace;margin-top:2px">'+g.ex+'</div></div><span class="cmp-delta up" style="white-space:nowrap">'+g.a+'</span></div>';}).join("");}
+function buildTenseMistakes(){var el=document.getElementById("tenseMistakes");el.innerHTML=TENSE_MISTAKES.map(function(m,i){return'<div style="padding:11px 0'+(i?';border-top:1px solid var(--brd)':'')+'"><div class="rule-pair"><span class="rp-w">'+m.w+'</span> → <span class="rp-r">'+m.r+'</span></div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;margin-top:4px">'+m.t+'</div></div>';}).join("");}
+
+/* ============ RULES + VOCAB BROWSE ============ */
+function buildRules(){var el=document.getElementById("ruleList");el.innerHTML="";RULES.forEach(function(r){var learned=!!DB.clDone["r"+r.num];el.innerHTML+='<div class="rule-card"><div class="rule-head" onclick="toggleRule('+r.num+')"><div style="display:flex;align-items:center;gap:11px"><div class="rule-num'+(learned?" learned":"")+'">'+(learned?"✓":r.num)+'</div><div class="rule-name">'+r.name+'</div></div><span id="ra'+r.num+'">▼</span></div><div class="rule-body" id="rb'+r.num+'"><div class="rule-tip">'+r.tip+'</div>'+r.pairs.map(function(p){return'<div class="rule-pair"><span class="rp-w">'+p[0]+'</span> → <span class="rp-r">'+p[1]+'</span></div>';}).join("")+'<div class="rule-ex">'+r.ex+'</div><div class="snd-row">'+r.speak.map(function(s,i){return'<button class="snd-btn" onclick="say(\''+s.replace(/'/g,"\\'")+'\')">🔊 '+(i+1)+'</button>';}).join("")+'</div></div></div>';});}
+function toggleRule(n){var b=document.getElementById("rb"+n),a=document.getElementById("ra"+n);var open=b.classList.contains("open");b.classList.toggle("open",!open);a.textContent=open?"▼":"▲";}
+function buildVocabBrowse(){document.getElementById("vocabCount").textContent=VOCAB.length;filterVocab();}
+function filterVocab(){var q=(document.getElementById("vocabSearch").value||"").toLowerCase();var list=VOCAB.filter(function(v){return!q||v.w.toLowerCase().indexOf(q)>=0||v.r.toLowerCase().indexOf(q)>=0;});var el=document.getElementById("vocabBrowse");el.innerHTML=list.slice(0,80).map(function(v){return'<div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--brd);cursor:pointer" onclick="say(\''+v.w.replace(/'/g,"\\'")+'\')"><div style="font-weight:700;font-size:13px;min-width:120px">'+v.w+' 🔊</div><div style="font-size:12px;color:var(--ink3);flex:1">'+v.r+'</div><div style="font-size:9px;color:var(--ink3)">Day '+v.day+'</div></div>';}).join("")+(list.length>80?'<div style="text-align:center;padding:12px;color:var(--ink3);font-size:11px">Showing 80 of '+list.length+' — search to narrow</div>':"");}
+
+/* ============ STATS ============ */
+function renderStats(){ensureDB();var streak=calcStreak();document.getElementById("stStreak").textContent=streak;var doneToday=DB.days.indexOf(today())>=0;var btn=document.getElementById("markBtn");btn.textContent=doneToday?"✓ Practiced today!":"✓ Mark today practiced";btn.className="btn "+(doneToday?"g":"primary");
+var completed=0;for(var i=1;i<=30;i++){var d=getDay(i);if(d.m.done&&d.e.done)completed++;}
+var wordsN=Object.keys(DB.vcDone).length;var clN=Object.keys(DB.clDone).filter(function(k){return DB.clDone[k];}).length;
+var c=DB.counts;var corr=(c.good||0),wr=(c.bad||0);var rate=(corr+wr)?Math.round(corr/(corr+wr)*100):0;
+var sg=[{n:completed+"/30",l:"Days done",c:"acc"},{n:streak,l:"Streak",c:"grn"},{n:wordsN+"/300",l:"Words learned",c:"grn"},{n:rate+"%",l:"Accuracy",c:rate>70?"grn":"acc"}];
+var ge=document.getElementById("statGrid");ge.innerHTML="";sg.forEach(function(s){ge.innerHTML+='<div class="stat-box"><div class="sb-n" style="color:var(--'+s.c+')">'+s.n+'</div><div class="sb-l">'+s.l+'</div></div>';});
+renderCompare();renderSRS();renderHeat();renderChecklist();}
+function renderCompare(){var wk=weekKey();var lastWk=weekKey(new Date(Date.now()-7*86400000));var thisDays=DB.days.filter(function(d){return weekKey(d)===wk;}).length;var lastDays=DB.days.filter(function(d){return weekKey(d)===lastWk;}).length;var lastSnap=DB.weekly[lastWk]||{};var wordsN=Object.keys(DB.vcDone).length;var c=DB.counts;var rate=((c.good||0)+(c.bad||0))?Math.round((c.good||0)/((c.good||0)+(c.bad||0))*100):0;var rows=[{l:"Days practiced",now:thisDays,prev:lastDays,sfx:""},{l:"Words learned",now:wordsN,prev:lastSnap.words||0,sfx:""},{l:"Accuracy",now:rate,prev:lastSnap.rate||0,sfx:"%"}];var el=document.getElementById("cmpList");el.innerHTML="";rows.forEach(function(r){var dl=r.now-r.prev;var cls=dl>0?"up":dl<0?"down":"same";var ar=dl>0?"▲":dl<0?"▼":"=";var sg=dl>0?"+":"";el.innerHTML+='<div class="cmp-row"><div class="cmp-label">'+r.l+'</div><div class="cmp-vals"><span class="cmp-now">'+r.now+r.sfx+'</span><span class="cmp-delta '+cls+'">'+ar+' '+sg+dl+r.sfx+'</span></div></div>';});DB.weekly[wk]={days:thisDays,words:wordsN,rate:rate};saveDB();}
+function renderSRS(){var el=document.getElementById("srsList");el.innerHTML="";var s=new Date(DB.created);var tdy=today();var sessions=[{d:1,t:"First words + Rules 1-2",ic:"🌱"},{d:3,t:"Review + new vocab",ic:"🃏"},{d:7,t:"Week 1 full review",ic:"📖"},{d:14,t:"Mid-course check",ic:"⚡"},{d:30,t:"Final mastery test",ic:"🏆"}];sessions.forEach(function(item){var t=new Date(s);t.setDate(t.getDate()+item.d-1);var ts=t.toISOString().split("T")[0];var done=DB.days.indexOf(ts)>=0&&ts<tdy;var isToday=ts===tdy;var diff=Math.round((t-new Date(tdy))/86400000);var when=done?"Done ✓":isToday?"TODAY 🔥":ts<tdy?"Passed":diff===1?"Tomorrow":"In "+diff+" days";el.innerHTML+='<div class="srs-row '+(done?"done-r":isToday?"now":"")+'"><div class="srs-day">'+item.d+'</div><div class="srs-info"><div class="srs-task">Day '+item.d+" — "+item.t+'</div><div class="srs-when" style="color:'+(done?"var(--grn)":isToday?"var(--acc)":"var(--ink3)")+'">'+when+'</div></div><div class="srs-ic">'+item.ic+'</div></div>';});}
+function renderHeat(){var grid=document.getElementById("heatGrid");grid.innerHTML="";["S","M","T","W","T","F","S"].forEach(function(d){var l=document.createElement("div");l.className="heat-l";l.textContent=d;grid.appendChild(l);});var now=new Date();var start=new Date(now);start.setDate(start.getDate()-41);var fd=start.getDay();for(var i=0;i<fd;i++)grid.appendChild(document.createElement("div"));for(var n=0;n<42;n++){var d=new Date(start);d.setDate(d.getDate()+n);var ds=d.toISOString().split("T")[0];var isT=ds===today();var has=DB.days.indexOf(ds)>=0;var c=document.createElement("div");c.className="heat-c"+(has?" l3":"")+(isT?" today":"");grid.appendChild(c);}}
+function renderChecklist(){var total=RULES.length;var doneN=Object.keys(DB.clDone).filter(function(k){return DB.clDone[k];}).length;document.getElementById("clFill").style.width=(doneN/total*100)+"%";document.getElementById("clPct").textContent=doneN+"/"+total;var el=document.getElementById("clList");el.innerHTML="";RULES.forEach(function(r){var isDone=!!DB.clDone["r"+r.num];el.innerHTML+='<div class="cl-item'+(isDone?" done":"")+'" onclick="toggleCl('+r.num+')"><div class="cl-check">'+(isDone?"✓":"")+'</div><div style="flex:1"><div class="cl-title">'+r.num+'. '+r.name+'</div><div class="cl-sub">'+r.tip.substring(0,60)+'...</div></div></div>';});}
+function toggleCl(n){DB.clDone["r"+n]=!DB.clDone["r"+n];saveDB();renderChecklist();}
+
+/* ============ REMINDERS ============ */
+function testReminders(){if(!("Notification" in window)){toast("Notifications not supported on this device");return;}Notification.requestPermission().then(function(p){if(p==="granted"){toast("Reminders on! We'll nudge you 🌅🌙");new Notification("English Daily",{body:"Reminders enabled! Practice morning + evening 🔥"});scheduleReminders();}else{toast("Reminders blocked — enable in browser settings");}});}
+function scheduleReminders(){/* best-effort in-page scheduling while open */if(window._remTimer)return;window._remTimer=setInterval(function(){var h=nowH();var d=getDay(activeDay());if(window.Notification&&Notification.permission==="granted"){var last=DB.lastNotif||"";var t=today();if(h>=8&&h<10&&!d.m.done&&last!==t+"m"){new Notification("🌅 Morning practice",{body:"10 new words are waiting. Start your day strong!"});DB.lastNotif=t+"m";saveDB();}if(h>=18&&h<20&&d.m.done&&!d.e.done&&last!==t+"e"){new Notification("🌙 Evening review",{body:"Lock in today's words before bed!"});DB.lastNotif=t+"e";saveDB();}}},60000);}
+
+/* ============ EXPORT/IMPORT ============ */
+function exportData(){var blob=new Blob([JSON.stringify(DB,null,2)],{type:"application/json"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="english-daily-backup-"+today()+".json";a.click();URL.revokeObjectURL(url);toast("Backup saved 💾");closeMenu();}
+function importData(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){try{DB=JSON.parse(e.target.result);ensureDB();saveDB();applyTheme();toast("Restored ✓");closeMenu();go("home");}catch(err){toast("Invalid file");}};r.readAsText(f);}
+
+/* ============ INIT ============ */
+applyTheme();
+renderHome();
+if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=function(){speechSynthesis.getVoices();};}
+if(window.Notification&&Notification.permission==="granted")scheduleReminders();
+</script>
+</body>
+</html>
