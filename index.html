@@ -393,6 +393,10 @@ body{font-family:'Sora',-apple-system,sans-serif;color:var(--ink);min-height:100
 <button class="seg-btn" onclick="setPractice('speak')">🎤 Speak</button>
 <button class="seg-btn" onclick="setPractice('dict')">👂 Dictation</button>
 </div>
+<div class="seg" id="practiceSeg3" style="margin-top:-6px">
+<button class="seg-btn" onclick="setPractice('osas')">🔤 Adj Order</button>
+<button class="seg-btn" onclick="setPractice('fix')">🔧 Fix It</button>
+</div>
 <div class="pills" id="practiceTopics" style="margin-top:6px"></div>
 <div id="gameMount"></div>
 </div>
@@ -865,6 +869,45 @@ var QUIZ_G=[
 {s:"He is good ______ writing.",o:["in","on","at","for"],a:2,h:"good AT."},
 {s:"If it ______ well, we scale.",o:["will perform","performs","performed","perform"],a:1,h:"if + present simple."}
 ];
+/* ADJECTIVE ORDER (OSASCOMP) — merged from English All */
+var OSAS_QS=[
+{noun:"table",adjs:[{w:"wooden",c:"Material"},{w:"small",c:"Size"},{w:"beautiful",c:"Opinion"}]},
+{noun:"car",adjs:[{w:"red",c:"Color"},{w:"old",c:"Age"},{w:"expensive",c:"Opinion"}]},
+{noun:"bag",adjs:[{w:"sleeping",c:"Purpose"},{w:"tiny",c:"Size"},{w:"green",c:"Color"}]},
+{noun:"shoes",adjs:[{w:"running",c:"Purpose"},{w:"Italian",c:"Origin"},{w:"lovely",c:"Opinion"}]},
+{noun:"cat",adjs:[{w:"black",c:"Color"},{w:"small",c:"Size"},{w:"ugly",c:"Opinion"}]},
+{noun:"cake",adjs:[{w:"birthday",c:"Purpose"},{w:"chocolate",c:"Material"},{w:"delicious",c:"Opinion"}]},
+{noun:"table",adjs:[{w:"round",c:"Shape"},{w:"old",c:"Age"},{w:"wooden",c:"Material"}]},
+{noun:"house",adjs:[{w:"French",c:"Origin"},{w:"ancient",c:"Age"},{w:"beautiful",c:"Opinion"}]},
+{noun:"dress",adjs:[{w:"silk",c:"Material"},{w:"long",c:"Shape"},{w:"lovely",c:"Opinion"}]},
+{noun:"box",adjs:[{w:"plastic",c:"Material"},{w:"square",c:"Shape"},{w:"tiny",c:"Size"}]},
+{noun:"ring",adjs:[{w:"gold",c:"Material"},{w:"oval",c:"Shape"},{w:"expensive",c:"Opinion"}]},
+{noun:"park",adjs:[{w:"local",c:"Origin"},{w:"large",c:"Size"},{w:"beautiful",c:"Opinion"}]}
+];
+var OSAS_ORD=["Opinion","Size","Age","Shape","Color","Origin","Material","Purpose"];
+/* FIX IT — error-correction sentences, merged from English All */
+var FIX_D=[
+{w:"She go to school yesterday.",r:"She went to school yesterday.",e:"go → went (past tense)"},
+{w:"He don't like coffee.",r:"He doesn't like coffee.",e:"He = doesn't"},
+{w:"I am agree with you.",r:"I agree with you.",e:"Agree is a verb — remove am"},
+{w:"We discussed about the problem.",r:"We discussed the problem.",e:"Discuss — no 'about' needed"},
+{w:"She is married with a doctor.",r:"She is married to a doctor.",e:"Married TO"},
+{w:"He didn't went to work.",r:"He didn't go to work.",e:"Didn't + base form"},
+{w:"I have seen him yesterday.",r:"I saw him yesterday.",e:"Yesterday = Past Simple"},
+{w:"There is many reasons to stay.",r:"There are many reasons to stay.",e:"Many = plural = are"},
+{w:"She enjoy reading books.",r:"She enjoys reading books.",e:"She = enjoys (add S)"},
+{w:"He is afraid from dogs.",r:"He is afraid of dogs.",e:"Afraid OF"},
+{w:"I look forward to meet you.",r:"I look forward to meeting you.",e:"Look forward to + V-ing"},
+{w:"She suggested me to go home.",r:"She suggested going home.",e:"Suggest + V-ing"},
+{w:"He is good in math.",r:"He is good at math.",e:"Good AT"},
+{w:"I prefer coffee than tea.",r:"I prefer coffee to tea.",e:"Prefer A TO B"},
+{w:"There are less people here.",r:"There are fewer people here.",e:"Fewer + countable"},
+{w:"She is one of the best student.",r:"She is one of the best students.",e:"One of the best + plural"},
+{w:"I am boring in this class.",r:"I am bored in this class.",e:"-ed = feeling (bored)"},
+{w:"The news are shocking.",r:"The news is shocking.",e:"News = singular"},
+{w:"She said me the truth.",r:"She told me the truth.",e:"Tell + person"},
+{w:"I will call when I will arrive.",r:"I will call when I arrive.",e:"When + Present Simple"}
+];
 /* ============ STATE ============ */
 var DB_KEY="englishDaily_v2";
 function loadDB(){try{var d=localStorage.getItem(DB_KEY);return d?JSON.parse(d):null;}catch(e){return null;}}
@@ -996,6 +1039,7 @@ SES={day:day,slot:slot,stages:stages,idx:0};
 go("practice");
 document.getElementById("practiceSeg").style.display="none";
 document.getElementById("practiceSeg2").style.display="none";
+document.getElementById("practiceSeg3").style.display="none";
 document.getElementById("practiceTopics").style.display="none";
 document.querySelector("#scr-practice .h1").textContent=(slot==="m"?"🌅 Morning":"🌙 Evening")+" — Day "+day;
 document.querySelector("#scr-practice .sub").style.display="none";
@@ -1039,6 +1083,7 @@ SES=null;
 // restore practice UI
 document.getElementById("practiceSeg").style.display="";
 document.getElementById("practiceSeg2").style.display="";
+document.getElementById("practiceSeg3").style.display="";
 document.getElementById("practiceTopics").style.display="";
 document.querySelector("#scr-practice .sub").style.display="";
 document.querySelector("#scr-practice .h1").textContent="🎮 Free Practice";
@@ -1162,6 +1207,8 @@ else if(id==="translate")runTranslateFree();
 else if(id==="quiz")runQuizFree();
 else if(id==="speak")runSpeakFree();
 else if(id==="dict")runDictFree();
+else if(id==="osas")runOsasFree();
+else if(id==="fix")runFixFree();
 }
 function buildPracticeTopics(){var el=document.getElementById("practiceTopics");el.innerHTML="";[{k:"all",l:"All 300"},{k:"1",l:"Days 1-6"},{k:"2",l:"Days 7-12"},{k:"3",l:"Days 13-18"},{k:"4",l:"Days 19-24"},{k:"5",l:"Days 25-30"}].forEach(function(t){var b=document.createElement("button");b.className="pill"+(practiceTopic===t.k?" on":"");b.textContent=t.l;b.onclick=function(){practiceTopic=t.k;setPractice(curPractice);};el.appendChild(b);});}
 /* Free wrappers reuse stage fns but loop forever with restart */
@@ -1177,6 +1224,27 @@ function runTranslateFree(){var mount=document.getElementById("gameMount");runTr
 function runQuizFree(){var mount=document.getElementById("gameMount");runQuiz({n:10},mount);}
 function runSpeakFree(){var mount=document.getElementById("gameMount");runSpeak({rules:[1,2,3,4,5,6,7,8,9,10],n:8},mount);}
 function runDictFree(){var mount=document.getElementById("gameMount");runDict({n:8},mount);}
+function runOsasFree(){var mount=document.getElementById("gameMount");runOsas({n:8},mount);}
+function runFixFree(){var mount=document.getElementById("gameMount");runFix({n:8},mount);}
+
+/* ============ STAGE: ADJECTIVE ORDER (OSASCOMP) ============ */
+var osQ=[],osI=0,osSel=[];
+function runOsas(st,mount){osQ=shuf(OSAS_QS).slice(0,st.n||8);osI=0;mount.innerHTML='<div class="scrow"><span>🔤 OSASCOMP</span><span id="osCnt">1/'+osQ.length+'</span></div><div id="osMount"></div>';osShow();}
+function osShow(){if(osI>=osQ.length){nextStage();return;}var q=osQ[osI];osSel=[];document.getElementById("osCnt").textContent=(osI+1)+"/"+osQ.length;document.getElementById("osMount").innerHTML='<div class="gap-sentence" style="font-size:15px">Put the adjectives in order:<br><b style="font-family:\'Fraunces\',serif;font-size:22px">a … '+q.noun+'</b></div><div class="wo-target" id="osTarget"><span style="font-size:12px;color:var(--ink3)">Tap adjectives in order ↓</span></div><div class="wo-pool" id="osPool"></div><div class="msg" id="osMsg"></div><div style="display:flex;gap:8px"><button class="btn ghost" onclick="osHint()">💡 Hint</button><button class="btn acc" id="osCheck" onclick="osCheckFn()">Check ✓</button></div><button class="nxt" id="osNxt" onclick="osNext()">Next →</button>';var pool=document.getElementById("osPool");shuf(q.adjs.slice()).forEach(function(adj){var b=document.createElement("button");b.className="wo-chip";b.textContent=adj.w;b.onclick=function(){osTap(b,adj.w);};pool.appendChild(b);});}
+function osRender(){var tgt=document.getElementById("osTarget");if(!osSel.length){tgt.classList.remove("has");tgt.innerHTML='<span style="font-size:12px;color:var(--ink3)">Tap adjectives in order ↓</span>';return;}tgt.classList.add("has");tgt.innerHTML="";osSel.forEach(function(s,i){var c=document.createElement("button");c.className="wo-chip in";c.textContent=s.w;c.onclick=function(){osRemove(i);};tgt.appendChild(c);});}
+function osTap(btn,word){if(btn.classList.contains("used"))return;btn.classList.add("used");osSel.push({w:word,el:btn});osRender();}
+function osRemove(idx){osSel[idx].el.classList.remove("used");osSel.splice(idx,1);osRender();}
+function osHint(){var q=osQ[osI];var sorted=q.adjs.slice().sort(function(a,b){return OSAS_ORD.indexOf(a.c)-OSAS_ORD.indexOf(b.c);});var m=document.getElementById("osMsg");m.className="msg yel vis";m.innerHTML="💡 "+sorted.map(function(a){return"<b>"+a.w+"</b> = "+a.c;}).join(", ");}
+function osCheckFn(){if(!osSel.length)return;var q=osQ[osI];var correct=q.adjs.slice().sort(function(a,b){return OSAS_ORD.indexOf(a.c)-OSAS_ORD.indexOf(b.c);}).map(function(a){return a.w;});var ans=osSel.map(function(s){return s.w;});var ok=JSON.stringify(ans)===JSON.stringify(correct);var tgt=document.getElementById("osTarget");tgt.classList.add(ok?"cor":"wrg");var m=document.getElementById("osMsg");if(ok){m.className="msg ok vis";m.innerHTML="✓ Correct! <b>a "+correct.join(" ")+" "+q.noun+"</b>";bump("good");say("a "+correct.join(" ")+" "+q.noun);}else{m.className="msg no vis";m.innerHTML="✗ Correct order: <b>a "+correct.join(" ")+" "+q.noun+"</b><br>"+correct.map(function(w){var a=q.adjs.find(function(x){return x.w===w;});return'<span style="font-size:11px">'+w+" = "+a.c+"</span>";}).join(" → ");bump("bad");}document.getElementById("osCheck").style.display="none";document.getElementById("osNxt").classList.add("vis");}
+function osNext(){osI++;osShow();}
+
+/* ============ STAGE: FIX IT (error correction) ============ */
+var fxQ=[],fxI=0;
+function runFix(st,mount){fxQ=shuf(FIX_D).slice(0,st.n||8);fxI=0;mount.innerHTML='<div class="scrow"><span>🔧 Fix the error</span><span id="fxCnt">1/'+fxQ.length+'</span></div><div id="fxMount"></div>';fxShow();}
+function fxShow(){if(fxI>=fxQ.length){nextStage();return;}var q=fxQ[fxI];document.getElementById("fxCnt").textContent=(fxI+1)+"/"+fxQ.length;document.getElementById("fxMount").innerHTML='<div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:700">Fix the error:</div><div class="speak-phrase" style="font-size:16px;color:var(--red)">'+q.w+'</div><textarea class="ta" id="fxInput" rows="2" placeholder="Type the correct sentence..."></textarea><div class="msg" id="fxMsg"></div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn ghost" onclick="fxReveal()">💡 Hint</button><button class="btn acc" id="fxCheck" onclick="fxCheckFn()">Check ✓</button></div><button class="nxt" id="fxNxt" onclick="fxNext()">Next →</button>';}
+function fxReveal(){var m=document.getElementById("fxMsg");m.className="msg yel vis";m.innerHTML="💡 "+fxQ[fxI].e;}
+function fxCheckFn(){var q=fxQ[fxI];var norm=function(s){return s.toLowerCase().replace(/[.,!?]/g,"").replace(/\s+/g," ").trim();};var ans=document.getElementById("fxInput").value;var ok=norm(ans)===norm(q.r);var m=document.getElementById("fxMsg");if(ok){m.className="msg ok vis";m.innerHTML="✓ Correct! <b>"+q.r+"</b>";bump("good");say(q.r);}else{m.className="msg no vis";m.innerHTML="✗ Correct: <b>"+q.r+"</b><br><span style='font-size:11px'>"+q.e+"</span>";bump("bad");}document.getElementById("fxCheck").style.display="none";document.getElementById("fxNxt").classList.add("vis");}
+function fxNext(){fxI++;fxShow();}
 
 /* ============ TENSES ============ */
 function buildTenses(){
