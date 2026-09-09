@@ -1,0 +1,1068 @@
+<title>Video → Cover Pipeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500;1,9..144,700&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg:        #FAF7F2;
+    --surface:   #FFFFFF;
+    --sunken:    #F3EEE5;
+    --text:      #1E2632;
+    --muted:     #5A6672;
+    --faint:     #8A94A0;
+    --accent:    #2A5C7A;
+    --accent-2:  #386F8C;
+    --tint:      #E3EDF3;
+    --warn:      #B26B15;
+    --warn-tint: #F6ECD9;
+    --good:      #2F6E4E;
+    --border:    #E5DFD4;
+    --rule:      #ECE6DA;
+    --shadow:    0 1px 0 rgba(30,38,50,0.03), 0 8px 24px -18px rgba(30,38,50,0.25);
+    --radius:    10px;
+    --radius-sm: 6px;
+    --serif:     "Fraunces", "Iowan Old Style", Georgia, serif;
+    --sans:      "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono:      "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:        #141821;
+      --surface:   #1C2230;
+      --sunken:    #181D28;
+      --text:      #E7E9EE;
+      --muted:     #98A2B0;
+      --faint:     #6B7686;
+      --accent:    #7AB1CD;
+      --accent-2:  #98C4DA;
+      --tint:      #223846;
+      --warn:      #E0A557;
+      --warn-tint: #3A2E1C;
+      --good:      #7FBF9E;
+      --border:    #2A3140;
+      --rule:      #232A38;
+      --shadow:    0 1px 0 rgba(0,0,0,0.15), 0 8px 24px -18px rgba(0,0,0,0.6);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:        #141821;
+    --surface:   #1C2230;
+    --sunken:    #181D28;
+    --text:      #E7E9EE;
+    --muted:     #98A2B0;
+    --faint:     #6B7686;
+    --accent:    #7AB1CD;
+    --accent-2:  #98C4DA;
+    --tint:      #223846;
+    --warn:      #E0A557;
+    --warn-tint: #3A2E1C;
+    --good:      #7FBF9E;
+    --border:    #2A3140;
+    --rule:      #232A38;
+    --shadow:    0 1px 0 rgba(0,0,0,0.15), 0 8px 24px -18px rgba(0,0,0,0.6);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 400 17px/1.6 var(--sans);
+    margin: 0;
+    padding: 0;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); transition: border-color .15s; }
+  a:hover { border-bottom-color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  ::selection { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+
+  /* ── Header ─────────────────────────────────────────────────────────── */
+  header.top {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: saturate(140%) blur(8px);
+    -webkit-backdrop-filter: saturate(140%) blur(8px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .top-inner {
+    max-width: 1040px; margin: 0 auto;
+    display: flex; align-items: center; gap: 20px;
+    padding: 14px 24px;
+  }
+  .brand {
+    display: flex; align-items: baseline; gap: 10px;
+    font-family: var(--serif); font-weight: 500; font-style: italic;
+    font-size: 18px; color: var(--text); line-height: 1;
+    text-wrap: balance;
+  }
+  .brand .glyph { font-style: normal; color: var(--accent); font-weight: 700; letter-spacing: -0.5px; }
+  .nav { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+  .nav a {
+    font: 500 13px/1 var(--sans);
+    padding: 8px 10px; border: 0; border-radius: 6px; color: var(--muted);
+  }
+  .nav a:hover { color: var(--text); background: var(--sunken); }
+  .lang-toggle {
+    display: inline-flex; padding: 3px; border-radius: 8px;
+    background: var(--sunken); border: 1px solid var(--border);
+  }
+  .lang-toggle button {
+    font: 600 12px/1 var(--sans);
+    padding: 6px 10px; border: 0; border-radius: 6px;
+    background: transparent; color: var(--muted); cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+  .lang-toggle button[aria-pressed="true"] {
+    background: var(--surface); color: var(--text); box-shadow: var(--shadow);
+  }
+
+  /* ── Layout ─────────────────────────────────────────────────────────── */
+  main { max-width: 760px; margin: 0 auto; padding: 48px 24px 96px; }
+  .hero {
+    display: grid; gap: 14px; padding: 8px 0 28px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 40px;
+  }
+  .eyebrow {
+    font: 600 11px/1 var(--sans);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    font: 500 42px/1.05 var(--serif); font-style: italic;
+    margin: 0; letter-spacing: -0.01em; text-wrap: balance;
+  }
+  h1 .amp { color: var(--accent); font-style: normal; font-weight: 700; padding: 0 4px; }
+  .subhead {
+    font-size: 17px; color: var(--muted); max-width: 62ch; text-wrap: pretty;
+  }
+  .meta-row {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    font: 500 12px/1 var(--sans); color: var(--faint); letter-spacing: 0.04em; text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .meta-row span::before { content: "· "; color: var(--rule); margin-right: 8px; }
+  .meta-row span:first-child::before { content: none; margin: 0; }
+
+  h2 {
+    font: 500 28px/1.15 var(--serif); font-style: italic;
+    margin: 56px 0 6px; letter-spacing: -0.005em; text-wrap: balance;
+    scroll-margin-top: 90px;
+  }
+  h2 .num {
+    font-family: var(--serif); font-weight: 700; font-style: normal;
+    color: var(--accent); margin-right: 12px; font-size: 22px;
+    vertical-align: 3px; letter-spacing: 0.02em;
+  }
+  h2 + .lede {
+    color: var(--muted); font-size: 16px; margin: 0 0 24px;
+    max-width: 60ch;
+  }
+  h3 {
+    font: 600 18px/1.3 var(--sans);
+    margin: 36px 0 8px; letter-spacing: -0.005em;
+    scroll-margin-top: 90px;
+  }
+  h4 {
+    font: 600 14px/1.3 var(--sans);
+    margin: 20px 0 4px; letter-spacing: 0.02em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  p { margin: 0 0 14px; text-wrap: pretty; }
+  ul, ol { padding-left: 22px; margin: 0 0 16px; }
+  li { margin: 4px 0; }
+  li::marker { color: var(--faint); }
+  strong { font-weight: 600; color: var(--text); }
+  code:not(pre code) {
+    font: 500 0.88em/1 var(--mono);
+    background: var(--sunken); padding: 2px 6px; border-radius: 4px;
+    border: 1px solid var(--rule); color: var(--text);
+  }
+
+  /* ── Numbered process steps ─────────────────────────────────────────── */
+  .step {
+    display: grid;
+    grid-template-columns: 68px 1fr;
+    gap: 20px;
+    padding: 24px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .step:first-of-type { border-top: 0; padding-top: 8px; }
+  .step .step-num {
+    font-family: var(--serif); font-style: italic; font-weight: 500;
+    font-size: 42px; line-height: 1;
+    color: var(--accent); text-align: right;
+    padding-top: 4px;
+  }
+  .step h3 { margin: 0 0 8px; }
+  .step > div > :last-child { margin-bottom: 0; }
+  @media (max-width: 560px) {
+    .step { grid-template-columns: 44px 1fr; gap: 14px; }
+    .step .step-num { font-size: 32px; }
+  }
+
+  /* ── Callouts ──────────────────────────────────────────────────────── */
+  .callout {
+    display: grid; grid-template-columns: 22px 1fr; gap: 12px;
+    padding: 14px 16px; border-radius: var(--radius-sm);
+    background: var(--tint);
+    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    margin: 16px 0;
+    font-size: 15.5px; line-height: 1.55;
+  }
+  .callout .icon { color: var(--accent); font-family: var(--serif); font-style: italic; font-weight: 700; text-align: center; }
+  .callout p { margin: 0 0 6px; }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout.warn {
+    background: var(--warn-tint);
+    border-color: color-mix(in srgb, var(--warn) 25%, transparent);
+  }
+  .callout.warn .icon { color: var(--warn); }
+
+  /* ── Screenshot slots ──────────────────────────────────────────────── */
+  .shot {
+    margin: 16px 0;
+    background: repeating-linear-gradient(
+      135deg,
+      var(--sunken) 0 12px,
+      transparent 12px 24px
+    );
+    border: 1px dashed color-mix(in srgb, var(--muted) 40%, transparent);
+    border-radius: var(--radius-sm);
+    padding: 22px 18px;
+    color: var(--muted);
+    font-size: 14.5px; line-height: 1.5;
+  }
+  .shot .shot-label {
+    display: inline-block;
+    font: 700 11px/1 var(--sans); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent);
+    background: var(--surface);
+    padding: 5px 8px; border-radius: 4px;
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    margin-bottom: 8px;
+  }
+  .shot .shot-body { display: block; color: var(--muted); }
+  .shot code { background: var(--surface); }
+
+  /* ── Prompt cards (copyable) ───────────────────────────────────────── */
+  .prompt {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    margin: 16px 0 20px; box-shadow: var(--shadow);
+  }
+  .prompt-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px;
+    background: var(--sunken);
+    border-bottom: 1px solid var(--rule);
+    font: 600 12px/1 var(--sans);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .prompt-head .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .prompt-head .name { color: var(--text); letter-spacing: 0.02em; text-transform: none; font-size: 13px; }
+  .prompt-head .spacer { flex: 1; }
+  .prompt-head .copy {
+    font: 600 11px/1 var(--sans);
+    padding: 6px 10px; border-radius: 5px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .prompt-head .copy:hover { color: var(--text); border-color: var(--muted); }
+  .prompt-head .copy[data-state="done"] { color: var(--good); border-color: color-mix(in srgb, var(--good) 40%, transparent); }
+  .prompt pre {
+    margin: 0; padding: 16px 18px; overflow-x: auto;
+    font: 400 13.5px/1.6 var(--mono);
+    color: var(--text);
+    background: var(--surface);
+    tab-size: 2;
+  }
+  .prompt pre::-webkit-scrollbar { height: 8px; }
+  .prompt pre::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 4px; }
+
+  /* ── Tree (folder structure) ───────────────────────────────────────── */
+  .tree {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px;
+    margin: 16px 0;
+    font: 400 14px/1.65 var(--mono);
+    color: var(--text);
+    overflow-x: auto;
+  }
+  .tree .c { color: var(--muted); }
+  .tree .d { color: var(--accent); font-weight: 500; }
+
+  /* ── Pipeline diagram ──────────────────────────────────────────────── */
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px; margin: 24px 0 8px;
+  }
+  .pipeline .cell {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 12px;
+    text-align: center; box-shadow: var(--shadow);
+    position: relative;
+  }
+  .pipeline .cell + .cell::before {
+    content: "→"; position: absolute; left: -14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--faint); font-weight: 700;
+  }
+  .pipeline .cell .k {
+    font: 600 10.5px/1 var(--sans); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--faint); margin-bottom: 6px;
+  }
+  .pipeline .cell .v { font: 500 14px/1.25 var(--sans); color: var(--text); }
+  .pipeline .cell .t { font-family: var(--serif); font-style: italic; font-weight: 500; color: var(--accent); font-size: 15px; }
+  @media (max-width: 560px) {
+    .pipeline { grid-template-columns: 1fr 1fr; }
+    .pipeline .cell + .cell::before { content: none; }
+  }
+
+  /* ── FAQ-style problem list ────────────────────────────────────────── */
+  .faq details {
+    border-top: 1px solid var(--rule);
+    padding: 14px 0;
+  }
+  .faq details:last-child { border-bottom: 1px solid var(--rule); }
+  .faq summary {
+    cursor: pointer; list-style: none;
+    font: 600 15.5px/1.4 var(--sans);
+    color: var(--text);
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::before {
+    content: "+"; color: var(--accent); font-family: var(--serif); font-weight: 700;
+    font-size: 20px; line-height: 1; width: 14px; display: inline-block;
+    transition: transform .15s;
+  }
+  .faq details[open] summary::before { content: "−"; }
+  .faq details > p, .faq details > ul { margin-top: 10px; color: var(--muted); font-size: 15.5px; }
+
+  /* ── Footer ────────────────────────────────────────────────────────── */
+  footer {
+    max-width: 760px; margin: 0 auto; padding: 40px 24px 60px;
+    border-top: 1px solid var(--rule);
+    color: var(--faint); font-size: 13px;
+  }
+
+  /* Language switching */
+  [data-lang-block]:not(.active) { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand"><span class="glyph">▸</span> Video → Cover Pipeline</div>
+    <nav class="nav active" data-lang-block="ru" aria-label="Разделы">
+      <a href="#overview">Обзор</a>
+      <a href="#setup">Установка</a>
+      <a href="#folder">Папка</a>
+      <a href="#workflow">Пайплайн</a>
+      <a href="#prompts">Промты</a>
+      <a href="#faq">Если что</a>
+    </nav>
+    <nav class="nav" data-lang-block="en" aria-label="Sections">
+      <a href="#overview-en">Overview</a>
+      <a href="#setup-en">Setup</a>
+      <a href="#folder-en">Folder</a>
+      <a href="#workflow-en">Workflow</a>
+      <a href="#prompts-en">Prompts</a>
+      <a href="#faq-en">Fixes</a>
+    </nav>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button data-lang="ru" aria-pressed="true">RU</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!--                                 RUSSIAN                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div data-lang-block="ru" class="active">
+
+  <div class="hero">
+    <div class="eyebrow">Инструкция для коллеги</div>
+    <h1>Видео <span class="amp">→</span> транскрипт <span class="amp">→</span> описание <span class="amp">→</span> обложка</h1>
+    <p class="subhead">Как получить готовое описание к YouTube-ролику и промт для обложки за 20 минут, не привлекая автора. Пайплайн, все шаги, точные промт-шаблоны для вставки в Claude, и что делать, когда что-то пошло не так.</p>
+    <div class="meta-row"><span>1 pdf-ish read</span><span>~25 минут первый прогон</span><span>~10 минут дальше</span></div>
+  </div>
+
+  <section id="overview">
+    <h2><span class="num">00</span>Как это устроено</h2>
+    <p class="lede">Три инструмента, четыре шага. Whisper делает текст из видео, Claude пишет описание и собирает промт для обложки, генератор картинок рисует саму обложку.</p>
+
+    <div class="pipeline" aria-label="Схема пайплайна">
+      <div class="cell"><div class="k">Вход</div><div class="v">Видео</div><div class="t">.mp4 / .mov</div></div>
+      <div class="cell"><div class="k">Шаг 1</div><div class="v">Транскрипт</div><div class="t">Whisper</div></div>
+      <div class="cell"><div class="k">Шаг 2</div><div class="v">Описание + промт</div><div class="t">Claude</div></div>
+      <div class="cell"><div class="k">Шаг 3</div><div class="v">Обложка</div><div class="t">Midjourney</div></div>
+    </div>
+
+    <h4>Что за инструменты</h4>
+    <ul>
+      <li><strong>Whisper</strong> — локальный распознаватель речи от OpenAI. Мы используем его через удобное десктопное приложение: <strong>MacWhisper</strong> на Mac, <strong>Buzz</strong> на Windows/Linux. Всё считается на твоём компьютере, файлы никуда не уходят.</li>
+      <li><strong>Claude Desktop</strong> — официальное приложение Anthropic. Ключевая функция для нас: подключение к папке через MCP, чтобы Клод сам читал файлы, а не через копипаст.</li>
+      <li><strong>Midjourney</strong> (в Discord) или <strong>ChatGPT</strong> (DALL·E) — только для последнего шага, генерации самой картинки по готовому промту.</li>
+    </ul>
+
+    <div class="callout">
+      <div class="icon">*</div>
+      <div>
+        <p>В нашей команде «Вайсбер» — это Whisper. Если у тебя другой транскрипционный инструмент — просто пропусти <strong>шаг A.1</strong> и используй свой; всё остальное работает так же.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="setup">
+    <h2><span class="num">A</span>Установка</h2>
+    <p class="lede">Один раз. Дальше не трогаешь.</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <h3>A.1 — Транскрипционный инструмент (Whisper)</h3>
+        <p><strong>Mac:</strong> скачай MacWhisper — <a href="https://goodsnooze.com/macwhisper" target="_blank" rel="noopener">goodsnooze.com/macwhisper</a>. Открой .dmg, перетащи в Applications, запусти. При первом запуске он предложит скачать модель — выбери <code>medium</code> (для русского это разумный баланс) или <code>large-v3</code> если хочется максимум качества.</p>
+        <p><strong>Windows / Linux:</strong> скачай Buzz — <a href="https://github.com/chidiwilliams/buzz/releases" target="_blank" rel="noopener">github.com/chidiwilliams/buzz/releases</a>. Ставится как обычный <code>.exe</code>. Модель <code>medium</code> — из настроек.</p>
+
+        <div class="shot">
+          <span class="shot-label">Скрин 1</span>
+          <span class="shot-body">Главное окно MacWhisper / Buzz после установки: слева пустой список файлов, справа панель настроек с полями <em>Model</em>, <em>Language</em> и кнопкой <em>Transcribe</em>.</span>
+        </div>
+
+        <h4>Настройки на один раз</h4>
+        <ul>
+          <li><strong>Model:</strong> <code>medium</code> или <code>large-v3</code>.</li>
+          <li><strong>Language:</strong> <code>Russian</code> или <code>Auto</code>, если языки разные.</li>
+          <li><strong>Output format:</strong> <code>.txt</code> обязательно, дополнительно <code>.srt</code> — про запас, если понадобятся тайм-коды.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <h3>A.2 — Claude Desktop</h3>
+        <p>Скачай приложение с <a href="https://claude.ai/download" target="_blank" rel="noopener">claude.ai/download</a>, войди в аккаунт.</p>
+        <p>Теперь дадим ему доступ к рабочей папке. Открой <strong>Settings → Developer → Edit Config</strong> — откроется файл <code>claude_desktop_config.json</code>. Вставь блок:</p>
+
+        <div class="prompt">
+          <div class="prompt-head">
+            <span class="dot"></span><span class="name">claude_desktop_config.json</span>
+            <span class="spacer"></span>
+            <button class="copy" data-state="idle">Copy</button>
+          </div>
+<pre><code>{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/YOU/Projects/covers"
+      ]
+    }
+  }
+}</code></pre>
+        </div>
+
+        <p>Замени путь на свой (Windows: <code>C:\\Users\\YOU\\Projects\\covers</code>, с двойными обратными слэшами). Полностью перезапусти Claude Desktop.</p>
+
+        <div class="shot">
+          <span class="shot-label">Скрин 2</span>
+          <span class="shot-body">Настройки Claude Desktop, вкладка <em>Developer</em>. Открытый в редакторе <code>claude_desktop_config.json</code> — видно вставленный блок <code>mcpServers.filesystem</code>.</span>
+        </div>
+
+        <div class="callout warn">
+          <div class="icon">!</div>
+          <div><p><strong>Node.js обязателен</strong> — команда <code>npx</code> работает только если установлен Node. Проверь: в терминале <code>node -v</code>. Если нет — поставь <a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> LTS.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <h3>A.3 — Проверка</h3>
+        <p>Открой в Claude Desktop новый чат и напиши:</p>
+        <div class="prompt">
+          <div class="prompt-head"><span class="dot"></span><span class="name">Проверочный запрос</span><span class="spacer"></span><button class="copy" data-state="idle">Copy</button></div>
+<pre><code>Покажи содержимое папки, к которой у тебя есть доступ.</code></pre>
+        </div>
+        <p>Клод должен вывести список файлов из папки. Если нет — проверь, что перезапустил приложение и что путь в конфиге совпадает с реальным.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="folder">
+    <h2><span class="num">B</span>Структура папки</h2>
+    <p class="lede">Порядок, к которому Клод ждёт файлы. Один раз собираешь — дальше только докидываешь новые видео.</p>
+
+    <div class="tree">
+<span class="d">covers/</span>
+├── <span class="d">videos/</span>            <span class="c">← сюда кладёшь новые ролики (.mp4, .mov)</span>
+├── <span class="d">transcripts/</span>       <span class="c">← сюда сохраняешь .txt из Whisper</span>
+├── <span class="d">examples/</span>
+│   ├── descriptions.md   <span class="c">← 3–5 прошлых удачных описаний</span>
+│   └── cover-prompts.md  <span class="c">← 3–5 прошлых промтов к обложкам</span>
+└── <span class="d">output/</span>
+    ├── <span class="d">descriptions/</span>  <span class="c">← сюда попадают готовые описания</span>
+    └── <span class="d">cover-prompts/</span> <span class="c">← сюда попадают готовые промты</span>
+    </div>
+
+    <p>Оба файла в <code>examples/</code> — обычный текст. Разделяй записи пустой строкой. Пример:</p>
+
+    <div class="prompt">
+      <div class="prompt-head"><span class="dot"></span><span class="name">examples/descriptions.md</span><span class="spacer"></span></div>
+<pre><code>Три века назад в Петербурге зажгли газовые фонари — задолго до того, как…
+[дальше — целиком описание, как оно было опубликовано]
+
+Второе описание. Другая тема, тот же голос.
+[и так далее]</code></pre>
+    </div>
+
+    <div class="callout">
+      <div class="icon">*</div>
+      <div><p>Правило: как только новое описание получилось хорошим — добавь его в <code>examples/descriptions.md</code>. Клод копирует стиль оттуда, поэтому чем свежее примеры — тем точнее попадание.</p></div>
+    </div>
+  </section>
+
+  <section id="workflow">
+    <h2><span class="num">C</span>Пайплайн на каждое видео</h2>
+    <p class="lede">Четыре шага. С третьего раза идёт по памяти.</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <h3>C.1 — Транскрибация</h3>
+        <ol>
+          <li>Положи новое видео в <code>covers/videos/</code>.</li>
+          <li>В MacWhisper / Buzz: <strong>File → Add</strong>, выбери файл.</li>
+          <li>Проверь: модель, язык, вывод <code>.txt</code>.</li>
+          <li>Нажми <strong>Transcribe</strong>. Ждать: 10-минутное видео на <code>medium</code> ≈ 2–3 минуты, на <code>large-v3</code> ≈ 6–8.</li>
+          <li>Сохрани готовый <code>.txt</code> в <code>covers/transcripts/</code>. Имя файла = имя видео (без пробелов, безопаснее с <code>-</code>).</li>
+        </ol>
+        <div class="shot">
+          <span class="shot-label">Скрин 3</span>
+          <span class="shot-body">MacWhisper во время транскрибации: индикатор прогресса, ниже — текст, который появляется по мере распознавания. Кнопка <em>Export → Text (.txt)</em> в правом верхнем.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <h3>C.2 — Описание видео</h3>
+        <p>В Claude Desktop открой новый чат. Вставь <a href="#p-description">промт D.1</a>, заменив <code>&lt;имя-файла&gt;</code> на настоящее имя транскрипта. Клод сам прочитает файлы примеров и транскрипта, вернёт описание.</p>
+        <p>Проверь глазами, поправь, если что, сохрани в <code>output/descriptions/&lt;имя-файла&gt;.md</code>.</p>
+        <div class="callout">
+          <div class="icon">*</div>
+          <div><p>Если тон промахнулся — попроси конкретно: «сделай короче на треть», «убери восклицательный знак», «первое предложение переделай так, чтобы начиналось с факта, а не с вопроса». Не пиши «сделай лучше» — Клод не поймёт, что именно.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <h3>C.3 — Промт для обложки</h3>
+        <p>В том же чате (Клод помнит контекст) или в новом — вставь <a href="#p-cover">промт D.2</a>. Клод сравнит с примерами и вернёт готовый промт одной строкой.</p>
+        <p>Сохрани в <code>output/cover-prompts/&lt;имя-файла&gt;.txt</code>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div>
+        <h3>C.4 — Собственно обложка</h3>
+        <ul>
+          <li><strong>Midjourney:</strong> в Discord набери <code>/imagine</code> и вставь промт целиком (в конце должен быть <code>--ar 16:9</code>). Получишь сетку из 4 вариантов, дальше <em>U1..U4</em> (апскейл), <em>V1..V4</em> (вариации).</li>
+          <li><strong>ChatGPT / DALL·E:</strong> в чате «Сгенерируй по этому промту, соотношение 16:9», вставь.</li>
+        </ul>
+        <p>Выбери один, при необходимости — попроси вариации той же композиции с другим освещением или цветом. Готово.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="prompts">
+    <h2><span class="num">D</span>Промт-шаблоны</h2>
+    <p class="lede">Оба промта — просто скопировать в чат Claude Desktop, подставить имя файла.</p>
+
+    <div id="p-description" class="prompt">
+      <div class="prompt-head">
+        <span class="dot"></span><span class="name">D.1 — Описание видео</span>
+        <span class="spacer"></span>
+        <button class="copy" data-state="idle">Copy</button>
+      </div>
+<pre><code>Ты помогаешь мне писать описание к YouTube-видео в моём голосе.
+
+1) Прочитай мои прошлые описания и переними стиль, длину, ритм, тон:
+   файл: examples/descriptions.md
+
+2) Прочитай транскрипт нового видео:
+   файл: transcripts/&lt;имя-файла&gt;.txt
+
+3) Напиши описание в том же стиле.
+
+Правила:
+- Длина: не длиннее самого длинного примера.
+- Начинай с крючка (факт, образ, вопрос), не с «в этом видео».
+- Эмодзи — только если они есть в примерах.
+- CTA в конце — только если он есть в примерах.
+- Никаких списков и подзаголовков, если их нет в примерах.
+
+Выведи только текст описания, без комментариев и без метки «Описание:».</code></pre>
+    </div>
+
+    <div id="p-cover" class="prompt">
+      <div class="prompt-head">
+        <span class="dot"></span><span class="name">D.2 — Промт для обложки (Midjourney)</span>
+        <span class="spacer"></span>
+        <button class="copy" data-state="idle">Copy</button>
+      </div>
+<pre><code>Ты собираешь промт для обложки видео (Midjourney).
+
+1) Прочитай мои прошлые обложечные промты:
+   файл: examples/cover-prompts.md
+
+2) Прочитай описание нового видео:
+   файл: output/descriptions/&lt;имя-файла&gt;.md
+
+3) Собери один промт для обложки в том же стиле и грамматике.
+
+Правила:
+- Один центральный визуальный образ, читаемый на превью размером с ноготь.
+- Тот же визуальный язык, что в примерах (палитра, шрифт, атмосфера, техника).
+- Никаких лиц публичных людей, водяных знаков, логотипов, текста.
+- В конце добавь параметры: --ar 16:9 --v 6 --style raw
+
+Выведи только промт, одной строкой, без комментариев.</code></pre>
+    </div>
+  </section>
+
+  <section id="faq" class="faq">
+    <h2><span class="num">E</span>Что делать если</h2>
+    <p class="lede">Короткий список типовых косяков и их починки.</p>
+
+    <details>
+      <summary>Whisper пишет ерунду в русских словах</summary>
+      <p>Переключи модель с <code>small</code>/<code>medium</code> на <code>large-v3</code>. Если и на <code>large-v3</code> ошибается — явно поставь <em>Language: Russian</em> вместо <em>Auto</em>. На тихой записи или сильном фоне помогает предварительная нормализация звука в любом аудиоредакторе.</p>
+    </details>
+    <details>
+      <summary>Claude отвечает «у меня нет доступа к файлам»</summary>
+      <ul>
+        <li>Проверь, что полностью закрыл и заново открыл Claude Desktop (не свернул — а именно вышел).</li>
+        <li>В <em>Settings → Developer</em> в статусе должен быть <em>filesystem: connected</em>.</li>
+        <li>Путь в конфиге — абсолютный (начинается с <code>/</code> на Mac или <code>C:\\</code> на Windows) и существует.</li>
+        <li>Проверь, что установлен Node.js: в терминале <code>node -v</code>.</li>
+      </ul>
+    </details>
+    <details>
+      <summary>Описание получилось не в стиле — «слишком общо», «не мой голос»</summary>
+      <p>Причина почти всегда одна: в <code>examples/descriptions.md</code> мало или устаревшие примеры. Добавь ещё 2–3 недавних удачных описания и перезапусти шаг C.2. Правильные примеры важнее умных инструкций.</p>
+    </details>
+    <details>
+      <summary>Обложка получается «мыльной», без деталей</summary>
+      <p>Добавь в конец промта <code>sharp focus, high detail, cinematic lighting</code>. Если промт получается длинный — сначала выкинь общие слова («beautiful», «amazing»), они ничего не добавляют.</p>
+    </details>
+    <details>
+      <summary>Клод пишет слишком длинно / слишком коротко</summary>
+      <p>В шаблоне D.1 замени пункт «Длина: не длиннее самого длинного примера» на «Длина: строго не более N слов». Если наоборот — «не менее N слов».</p>
+    </details>
+    <details>
+      <summary>MacWhisper падает на длинных стримах (60+ минут)</summary>
+      <p>Разрежь файл на куски по 30–40 минут любым видеоредактором (или командой <code>ffmpeg -i in.mp4 -c copy -segment_time 1800 -f segment out%03d.mp4</code>). Транскрибируй каждый кусок, потом склей <code>.txt</code>-файлы в один.</p>
+    </details>
+    <details>
+      <summary>Хочу дать Клоду сразу несколько видео</summary>
+      <p>Работает: положи все транскрипты в <code>transcripts/</code>, и в промте D.1 замени «файл: transcripts/&lt;имя-файла&gt;.txt» на «файлы: все .txt в папке transcripts/». Клод пройдётся по каждому и выдаст пачку описаний.</p>
+    </details>
+  </section>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!--                                 ENGLISH                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div data-lang-block="en">
+
+  <div class="hero">
+    <div class="eyebrow">Handoff for a teammate</div>
+    <h1>Video <span class="amp">→</span> transcript <span class="amp">→</span> description <span class="amp">→</span> cover</h1>
+    <p class="subhead">How to turn a YouTube video into a finished description and a cover-art prompt in 20 minutes without pulling in the author. The pipeline, every step, the exact prompt templates to paste into Claude, and what to do when something goes sideways.</p>
+    <div class="meta-row"><span>One read</span><span>~25 min first run</span><span>~10 min after that</span></div>
+  </div>
+
+  <section id="overview-en">
+    <h2><span class="num">00</span>How the pipeline works</h2>
+    <p class="lede">Three tools, four steps. Whisper turns video into text, Claude writes the description and assembles the cover prompt, an image generator draws the cover.</p>
+
+    <div class="pipeline" aria-label="Pipeline diagram">
+      <div class="cell"><div class="k">Input</div><div class="v">Video file</div><div class="t">.mp4 / .mov</div></div>
+      <div class="cell"><div class="k">Step 1</div><div class="v">Transcript</div><div class="t">Whisper</div></div>
+      <div class="cell"><div class="k">Step 2</div><div class="v">Description + prompt</div><div class="t">Claude</div></div>
+      <div class="cell"><div class="k">Step 3</div><div class="v">Cover art</div><div class="t">Midjourney</div></div>
+    </div>
+
+    <h4>The tools</h4>
+    <ul>
+      <li><strong>Whisper</strong> — OpenAI's local speech-to-text. We run it through a friendly desktop app: <strong>MacWhisper</strong> on Mac, <strong>Buzz</strong> on Windows / Linux. Everything runs on your machine; files never leave it.</li>
+      <li><strong>Claude Desktop</strong> — Anthropic's official app. The key feature for us: MCP filesystem access, so Claude reads your files directly instead of via copy-paste.</li>
+      <li><strong>Midjourney</strong> (in Discord) or <strong>ChatGPT</strong> (DALL·E) — only for the last step, drawing the cover from the finished prompt.</li>
+    </ul>
+
+    <div class="callout">
+      <div class="icon">*</div>
+      <div><p>On our team "Wisber" refers to Whisper. If you use a different transcription tool, skip <strong>step A.1</strong> and use yours; everything downstream is the same.</p></div>
+    </div>
+  </section>
+
+  <section id="setup-en">
+    <h2><span class="num">A</span>Setup</h2>
+    <p class="lede">One-time. Don't touch it afterwards.</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <h3>A.1 — Transcription tool (Whisper)</h3>
+        <p><strong>Mac:</strong> get MacWhisper from <a href="https://goodsnooze.com/macwhisper" target="_blank" rel="noopener">goodsnooze.com/macwhisper</a>. Open the .dmg, drag it to Applications, launch. On first run it will download a model — pick <code>medium</code> (sensible default) or <code>large-v3</code> for best quality.</p>
+        <p><strong>Windows / Linux:</strong> get Buzz from <a href="https://github.com/chidiwilliams/buzz/releases" target="_blank" rel="noopener">github.com/chidiwilliams/buzz/releases</a>. Installs like any <code>.exe</code>. Pick the model from <em>Preferences</em>.</p>
+
+        <div class="shot">
+          <span class="shot-label">Screen 1</span>
+          <span class="shot-body">MacWhisper / Buzz main window right after install: empty file list on the left, settings panel on the right with <em>Model</em>, <em>Language</em> and a <em>Transcribe</em> button.</span>
+        </div>
+
+        <h4>One-time settings</h4>
+        <ul>
+          <li><strong>Model:</strong> <code>medium</code> or <code>large-v3</code>.</li>
+          <li><strong>Language:</strong> your target language, or <code>Auto</code> for mixed content.</li>
+          <li><strong>Output format:</strong> <code>.txt</code> is required, plus <code>.srt</code> as a fallback if you ever need timecodes.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <h3>A.2 — Claude Desktop</h3>
+        <p>Download from <a href="https://claude.ai/download" target="_blank" rel="noopener">claude.ai/download</a>, sign in.</p>
+        <p>Now give it access to your working folder. Open <strong>Settings → Developer → Edit Config</strong> — this opens <code>claude_desktop_config.json</code>. Paste this block:</p>
+
+        <div class="prompt">
+          <div class="prompt-head">
+            <span class="dot"></span><span class="name">claude_desktop_config.json</span>
+            <span class="spacer"></span>
+            <button class="copy" data-state="idle">Copy</button>
+          </div>
+<pre><code>{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/YOU/Projects/covers"
+      ]
+    }
+  }
+}</code></pre>
+        </div>
+
+        <p>Replace the path with your actual folder (Windows: <code>C:\\Users\\YOU\\Projects\\covers</code> — double backslashes). Fully quit and relaunch Claude Desktop.</p>
+
+        <div class="shot">
+          <span class="shot-label">Screen 2</span>
+          <span class="shot-body">Claude Desktop Settings, <em>Developer</em> tab. The config file open in an editor showing the <code>mcpServers.filesystem</code> block you just pasted.</span>
+        </div>
+
+        <div class="callout warn">
+          <div class="icon">!</div>
+          <div><p><strong>Node.js is required</strong> — <code>npx</code> only works with Node installed. Check in a terminal: <code>node -v</code>. If missing, install LTS from <a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a>.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <h3>A.3 — Sanity check</h3>
+        <p>Open a new chat in Claude Desktop and type:</p>
+        <div class="prompt">
+          <div class="prompt-head"><span class="dot"></span><span class="name">Sanity check</span><span class="spacer"></span><button class="copy" data-state="idle">Copy</button></div>
+<pre><code>List the contents of the folder you have access to.</code></pre>
+        </div>
+        <p>Claude should list your files. If not, check that you fully quit and reopened the app and that the path in the config actually exists.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="folder-en">
+    <h2><span class="num">B</span>Folder layout</h2>
+    <p class="lede">The layout Claude expects. Build it once, then only drop in new videos.</p>
+
+    <div class="tree">
+<span class="d">covers/</span>
+├── <span class="d">videos/</span>            <span class="c">← drop new videos here (.mp4, .mov)</span>
+├── <span class="d">transcripts/</span>       <span class="c">← Whisper .txt files land here</span>
+├── <span class="d">examples/</span>
+│   ├── descriptions.md   <span class="c">← 3–5 past descriptions that landed well</span>
+│   └── cover-prompts.md  <span class="c">← 3–5 past cover prompts</span>
+└── <span class="d">output/</span>
+    ├── <span class="d">descriptions/</span>  <span class="c">← finished descriptions land here</span>
+    └── <span class="d">cover-prompts/</span> <span class="c">← finished cover prompts land here</span>
+    </div>
+
+    <p>Both files in <code>examples/</code> are plain text. Separate entries with a blank line:</p>
+
+    <div class="prompt">
+      <div class="prompt-head"><span class="dot"></span><span class="name">examples/descriptions.md</span><span class="spacer"></span></div>
+<pre><code>Three centuries ago Petersburg lit its gas lamps — long before…
+[the full description as it was published]
+
+Second description. Different topic, same voice.
+[and so on]</code></pre>
+    </div>
+
+    <div class="callout">
+      <div class="icon">*</div>
+      <div><p>Rule: every time a new description turns out well — add it to <code>examples/descriptions.md</code>. Claude copies style from there, so fresher examples = sharper matches.</p></div>
+    </div>
+  </section>
+
+  <section id="workflow-en">
+    <h2><span class="num">C</span>Per-video workflow</h2>
+    <p class="lede">Four steps. Muscle memory by the third video.</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <h3>C.1 — Transcribe</h3>
+        <ol>
+          <li>Drop the new video into <code>covers/videos/</code>.</li>
+          <li>In MacWhisper / Buzz: <strong>File → Add</strong>, pick the file.</li>
+          <li>Verify model, language, <code>.txt</code> output.</li>
+          <li>Hit <strong>Transcribe</strong>. Timing: a 10-min clip on <code>medium</code> ≈ 2–3 min, on <code>large-v3</code> ≈ 6–8 min.</li>
+          <li>Save the <code>.txt</code> into <code>covers/transcripts/</code>. Filename = the video's name (no spaces — use <code>-</code>).</li>
+        </ol>
+        <div class="shot">
+          <span class="shot-label">Screen 3</span>
+          <span class="shot-body">MacWhisper mid-transcription: progress bar, text appearing as it's recognized, and the <em>Export → Text (.txt)</em> button in the top-right corner.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <h3>C.2 — Description</h3>
+        <p>Open a new chat in Claude Desktop. Paste <a href="#p-description-en">prompt D.1</a>, replacing <code>&lt;filename&gt;</code> with the real transcript name. Claude reads the example and transcript files itself and returns a description.</p>
+        <p>Read it, tweak if needed, save to <code>output/descriptions/&lt;filename&gt;.md</code>.</p>
+        <div class="callout">
+          <div class="icon">*</div>
+          <div><p>If the tone is off, ask specifically: "make it a third shorter", "drop the exclamation mark", "redo the first sentence to open with a fact, not a question". Don't say "make it better" — Claude has no idea what that means.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <h3>C.3 — Cover prompt</h3>
+        <p>In the same chat (Claude keeps context) or a new one, paste <a href="#p-cover-en">prompt D.2</a>. Claude compares to the examples and returns a single-line prompt.</p>
+        <p>Save to <code>output/cover-prompts/&lt;filename&gt;.txt</code>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div>
+        <h3>C.4 — The actual cover</h3>
+        <ul>
+          <li><strong>Midjourney:</strong> in Discord type <code>/imagine</code> and paste the full prompt (it must end with <code>--ar 16:9</code>). You get a 4-image grid — then <em>U1..U4</em> to upscale, <em>V1..V4</em> for variations.</li>
+          <li><strong>ChatGPT / DALL·E:</strong> "Generate this prompt at 16:9 aspect ratio", paste.</li>
+        </ul>
+        <p>Pick one, ask for variations of the same composition with different lighting or palette if needed. Done.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="prompts-en">
+    <h2><span class="num">D</span>Prompt templates</h2>
+    <p class="lede">Both prompts — just paste into a Claude Desktop chat, swap the filename.</p>
+
+    <div id="p-description-en" class="prompt">
+      <div class="prompt-head">
+        <span class="dot"></span><span class="name">D.1 — Video description</span>
+        <span class="spacer"></span>
+        <button class="copy" data-state="idle">Copy</button>
+      </div>
+<pre><code>You help me write YouTube video descriptions in my voice.
+
+1) Read my past descriptions and pick up the style, length, rhythm, tone:
+   file: examples/descriptions.md
+
+2) Read the transcript of the new video:
+   file: transcripts/&lt;filename&gt;.txt
+
+3) Write a description in the same style.
+
+Rules:
+- Length: no longer than the longest example.
+- Open with a hook (fact, image, question), not "in this video".
+- Emoji only if the examples use them.
+- CTA at the end only if the examples have one.
+- No bullet lists or subheadings unless the examples use them.
+
+Output only the description text — no commentary, no "Description:" label.</code></pre>
+    </div>
+
+    <div id="p-cover-en" class="prompt">
+      <div class="prompt-head">
+        <span class="dot"></span><span class="name">D.2 — Cover prompt (Midjourney)</span>
+        <span class="spacer"></span>
+        <button class="copy" data-state="idle">Copy</button>
+      </div>
+<pre><code>You assemble a cover-art prompt for a video (Midjourney).
+
+1) Read my past cover prompts:
+   file: examples/cover-prompts.md
+
+2) Read the new video's description:
+   file: output/descriptions/&lt;filename&gt;.md
+
+3) Assemble one cover prompt in the same style and grammar.
+
+Rules:
+- One central visual, readable at thumbnail size.
+- Same visual language as the examples (palette, typography, mood, technique).
+- No faces of public figures, no watermarks, no logos, no text.
+- End with: --ar 16:9 --v 6 --style raw
+
+Output only the prompt, on one line, no commentary.</code></pre>
+    </div>
+  </section>
+
+  <section id="faq-en" class="faq">
+    <h2><span class="num">E</span>Troubleshooting</h2>
+    <p class="lede">Short list of the usual snags and how to unstick them.</p>
+
+    <details>
+      <summary>Whisper mangles words in my target language</summary>
+      <p>Switch the model from <code>small</code>/<code>medium</code> to <code>large-v3</code>. If <code>large-v3</code> still gets it wrong, set <em>Language</em> explicitly instead of <em>Auto</em>. For quiet recordings or heavy background noise, normalize the audio in any audio editor first.</p>
+    </details>
+    <details>
+      <summary>Claude says "I don't have access to files"</summary>
+      <ul>
+        <li>Fully quit and reopen Claude Desktop (not just close the window — quit the app).</li>
+        <li>In <em>Settings → Developer</em>, the connector should show <em>filesystem: connected</em>.</li>
+        <li>The path in the config must be absolute (starts with <code>/</code> on Mac or <code>C:\\</code> on Windows) and must exist.</li>
+        <li>Check Node.js is installed: <code>node -v</code> in a terminal.</li>
+      </ul>
+    </details>
+    <details>
+      <summary>Description feels off — "too generic", "not my voice"</summary>
+      <p>Almost always the same cause: <code>examples/descriptions.md</code> is thin or stale. Add 2–3 recent good descriptions and rerun step C.2. Right examples beat clever instructions.</p>
+    </details>
+    <details>
+      <summary>Cover comes out blurry, low on detail</summary>
+      <p>Append <code>sharp focus, high detail, cinematic lighting</code> to the prompt. If the prompt is getting long, first drop the empty adjectives ("beautiful", "amazing") — they carry no weight.</p>
+    </details>
+    <details>
+      <summary>Claude writes too long / too short</summary>
+      <p>In D.1 replace "Length: no longer than the longest example" with "Length: strictly at most N words". Or vice versa: "at least N words".</p>
+    </details>
+    <details>
+      <summary>MacWhisper crashes on long streams (60+ min)</summary>
+      <p>Slice the file into 30–40-minute chunks in any video editor (or with <code>ffmpeg -i in.mp4 -c copy -segment_time 1800 -f segment out%03d.mp4</code>). Transcribe each chunk, then concatenate the <code>.txt</code> files.</p>
+    </details>
+    <details>
+      <summary>I want to hand Claude several videos at once</summary>
+      <p>Works: put all the transcripts into <code>transcripts/</code>, and in D.1 replace "file: transcripts/&lt;filename&gt;.txt" with "files: every .txt inside transcripts/". Claude will iterate and hand you a batch of descriptions.</p>
+    </details>
+  </section>
+
+</div>
+
+</main>
+
+<footer>
+  <span data-lang-block="ru" class="active">Инструкция для внутреннего использования. Правь <code>examples/</code> — правишь стиль.</span>
+  <span data-lang-block="en">Internal handoff. To change the voice, change the files in <code>examples/</code>.</span>
+</footer>
+
+<script>
+(function () {
+  var buttons = document.querySelectorAll('.lang-toggle button');
+  var blocks = document.querySelectorAll('[data-lang-block]');
+
+  function setLang(lang) {
+    document.documentElement.lang = lang;
+    blocks.forEach(function (el) {
+      var on = el.getAttribute('data-lang-block') === lang;
+      el.classList.toggle('active', on);
+    });
+    buttons.forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false');
+    });
+    try { localStorage.setItem('vc-lang', lang); } catch (_) {}
+  }
+
+  var saved = null;
+  try { saved = localStorage.getItem('vc-lang'); } catch (_) {}
+  setLang(saved || 'ru');
+
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () { setLang(b.dataset.lang); });
+  });
+
+  document.querySelectorAll('.prompt .copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var code = btn.closest('.prompt').querySelector('pre code');
+      if (!code) return;
+      var text = code.textContent;
+      var done = function () {
+        var original = btn.textContent;
+        btn.textContent = document.documentElement.lang === 'en' ? 'Copied' : 'Скопировано';
+        btn.setAttribute('data-state', 'done');
+        setTimeout(function () {
+          btn.textContent = 'Copy';
+          btn.setAttribute('data-state', 'idle');
+        }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {
+          fallbackCopy(text); done();
+        });
+      } else {
+        fallbackCopy(text); done();
+      }
+    });
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (_) {}
+    document.body.removeChild(ta);
+  }
+})();
+</script>
